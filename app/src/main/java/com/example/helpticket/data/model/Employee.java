@@ -1,14 +1,25 @@
+/*Objective:This class is for the employees of the company, they will request tickets to HelpDesk
+* This application will get the tickets and so I need an class to store the data to those employees*/
 package com.example.helpticket.data.model;
 
 public class Employee {
-
+    //fields
     private int idEmployee;
     private int idRequest;
     private int idEquipment_Employee;
     private String name;
     private String email;
 
+    //constructor
+    public Employee(int idEmployee, int idRequest, int idEquipment_Employee, String name, String email) {
+        this.idEmployee = idEmployee;
+        this.idRequest = idRequest;
+        this.idEquipment_Employee = idEquipment_Employee;
+        this.name = name;
+        this.email = email;
+    }
 
+    //gets and sets
     public int getIdEmployee() {
         return idEmployee;
     }
@@ -48,4 +59,6 @@ public class Employee {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }
