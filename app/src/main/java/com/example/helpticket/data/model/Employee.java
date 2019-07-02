@@ -2,19 +2,22 @@
 * This application will get the tickets and so I need an class to store the data to those employees*/
 package com.example.helpticket.data.model;
 
+//Iniciar instância da classe que tem relação com, fazer isso com o resto
+
 public class Employee {
     //fields
     private int idEmployee;
     private int idRequest;
-    private int idEquipment_Employee;
+
     private String name;
     private String email;
+    private Equipment equipmentId;
 
     //constructor
     public Employee(int idEmployee, int idRequest, int idEquipment_Employee, String name, String email) {
         this.idEmployee = idEmployee;
         this.idRequest = idRequest;
-        this.idEquipment_Employee = idEquipment_Employee;
+
         this.name = name;
         this.email = email;
     }
@@ -36,13 +39,9 @@ public class Employee {
         this.idRequest = idRequest;
     }
 
-    public int getIdEquipment_Employee() {
-        return idEquipment_Employee;
-    }
 
-    public void setIdEquipment_Employee(int idEquipment_Employee) {
-        this.idEquipment_Employee = idEquipment_Employee;
-    }
+
+
 
     public String getName() {
         return name;
