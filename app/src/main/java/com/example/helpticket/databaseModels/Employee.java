@@ -1,6 +1,6 @@
 /*Objective:This class is for the employees of the company, they will request tickets to HelpDesk
 * This application will get the tickets and so I need an class to store the data to those employees*/
-package com.example.helpticket.data.model;
+package com.example.helpticket.databaseModels;
 
 //Iniciar instância da classe que tem relação com, fazer isso com o resto
 

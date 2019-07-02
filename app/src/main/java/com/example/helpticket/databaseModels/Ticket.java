@@ -1,7 +1,7 @@
 /*Objective:This class is to store the information coming from HelpDesk,it will be sent to the technicians as a
 * (notification?) and they also can see it in app*/
 
-package com.example.helpticket.data.model;
+package com.example.helpticket.databaseModels;
 
 import java.util.Date;
 

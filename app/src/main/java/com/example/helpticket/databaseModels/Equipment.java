@@ -1,5 +1,5 @@
 /*Objective:This class will store the different equipments that the technicians are called to */
-package com.example.helpticket.data.model;
+package com.example.helpticket.databaseModels;
 
 public class Equipment {
     //fields
