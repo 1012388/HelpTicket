@@ -1,6 +1,6 @@
 /*Objective:This class will be for storing the information about the Technicians, more importantly
 * their username and password so they can acess the app and later for their end shift report*/
-package com.example.helpticket.data.model;
+package com.example.helpticket.databaseModels;
 
 public class Technician {
     //fields

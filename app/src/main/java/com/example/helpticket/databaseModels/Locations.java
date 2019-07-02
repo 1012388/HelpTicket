@@ -7,7 +7,7 @@
 * */
 
 
-package com.example.helpticket.data.model;
+package com.example.helpticket.databaseModels;
 
 public class Locations {
 
