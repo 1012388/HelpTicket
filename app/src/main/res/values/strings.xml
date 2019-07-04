@@ -14,4 +14,7 @@
     <string name="search">Search</string>
     <string name="tickets">Tickets</string>
     <string name="newTicket">New</string>
+    <string name="title_activity_read_ticket">ReadTicketActivity</string>
+    <string name="solved_tickets">Solved Tickets</string>
+    <string name="unsolved_tickets">Unsolved Tickets</string>
 </resources>

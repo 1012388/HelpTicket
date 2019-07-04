@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.helpticket.R;
+import com.example.helpticket.mainModel.MainActivity;
 import com.example.helpticket.ui.login.LoginViewModel;
 import com.example.helpticket.ui.login.LoginViewModelFactory;
 
@@ -74,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
-                finish();//change this to open mainActivity
+                showMainMenu(usernameEditText.getText(),passwordEditText.getText());//change this to open mainActivity
             }
         });
 
@@ -117,6 +119,15 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+    }
+
+    private void showMainMenu(Editable username, Editable password) {
+        Intent intent = new Intent(this, MainActivity.class);
+
+        intent.putExtra("Username",username);
+        intent.putExtra("Password", password);
+
+        startActivity(intent);
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
