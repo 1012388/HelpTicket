@@ -6,12 +6,14 @@ public class Technician {
     //fields
     private int idTechnician;
     private String name;
+    private String email;
     private String username;
     private String password;
 
     //constructor
-    public Technician(int idTechnician, String name, String username, String password) {
+    public Technician(int idTechnician, String email,String name, String username, String password) {
         this.idTechnician = idTechnician;
+        this.email = email;
         this.name = name;
         this.username = username;
         this.password = password;
@@ -25,6 +27,15 @@ public class Technician {
     public void setIdTechnician(int idTechnician) {
         this.idTechnician = idTechnician;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 
     public String getName() {
         return name;
