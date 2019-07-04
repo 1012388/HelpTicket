@@ -1,39 +1,79 @@
 package com.example.helpticket.mainModel;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.helpticket.R;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends Activity {
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_read_ticket);
+        setContentView(R.layout.activity_main_menu);
 
-        ButtonData[] buttonData = new ButtonData[]{
-                new ButtonData("Request", android.R.drawable.btn_default)
-        };
+        Button btnNewTicket = (Button) findViewById(R.id.btnNew);
+        Button btnUpdateTicket = (Button) findViewById(R.id.btnUpdate);
+        Button btnDeleteTicket = (Button) findViewById(R.id.btnDelete);
+        Button btnSearchTicket = (Button) findViewById(R.id.btnSearch);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        RequestAdapter requestAdapter = new RequestAdapter(buttonData);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(requestAdapter);
+        btnNewTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Creating a new Ticket", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                showCreateNewTicket();
+            }
+
+        });
+
+        btnUpdateTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Updating a Ticket", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                showUpdateTicket();
+            }
+            //TODO:
+        });
+        btnDeleteTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Deleting a Ticket", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                showDeleteTicket();
+            }
+            //TODO:
+        });
+        btnSearchTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Searching a new Ticket", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                showSearchTicket();
+            }
+
+        });
+
+
     }
 
-    public void showMainActivity() {
-        //TODO:criar uma classe para mostrar o menu
+    public void showSearchTicket() {
+
+    }
+
+    public void showDeleteTicket() {
+    }
+
+    public void showUpdateTicket() {
+    }
+
+    public void showCreateNewTicket() {
+
         //Intent intent = new Intent(this, showMainActivity.class);
 
 
@@ -47,3 +87,4 @@ public class MainActivity extends Activity {
     //TODO:Relatório, tem de mostrar todos os pedidos que um técnico fez nesse dia. Poder ver sempre os relatórios antigos.
     //TODO:Create falta colocar spinner também os equipamentos que estão associados à pessoa.
 }
+
