@@ -9,19 +9,24 @@ public class Ticket {
 
     //fields
     private int idTicket;
-    private Date data;
+    private Equipment idEquipment;
+    private Date requested_data;
+    private Date finished_data;
     private int idEmployee;
     private String desccription;
 
     //constructor
-    public Ticket(int idTicket, Date data, int idEmployee, String desccription) {
+    public Ticket(int idTicket, Equipment idEquipment,Date requested_data,Date finished_data, int idEmployee, String desccription) {
         this.idTicket = idTicket;
-        this.data = data;
+        this.idEquipment = idEquipment;
+        this.requested_data = requested_data;
+        this.finished_data = finished_data;
         this.idEmployee = idEmployee;
         this.desccription = desccription;
     }
 
     //gets and sets
+
     public int getIdTicket() {
         return idTicket;
     }
@@ -30,12 +35,28 @@ public class Ticket {
         this.idTicket = idTicket;
     }
 
-    public Date getData() {
-        return data;
+    public Equipment getIdEquipment() {
+        return idEquipment;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setIdEquipment(Equipment idEquipment) {
+        this.idEquipment = idEquipment;
+    }
+
+    public Date getRequested_data() {
+        return requested_data;
+    }
+
+    public void setRequested_data(Date requested_data) {
+        this.requested_data = requested_data;
+    }
+
+    public Date getFinished_data() {
+        return finished_data;
+    }
+
+    public void setFinished_data(Date finished_data) {
+        this.finished_data = finished_data;
     }
 
     public int getIdEmployee() {

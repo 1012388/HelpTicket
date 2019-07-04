@@ -4,14 +4,19 @@ package com.example.helpticket.databaseModels;
 public class Equipment {
     //fields
     private int idEquipment;
+    private Employee idEmployee;
+    private Locations idLocations;
     private String name;
 
     //constructor
-    public Equipment(int idEquipment, String name) {
-        this.setIdEquipment(idEquipment);
-        this.setName(name);
-    }
 
+
+    public Equipment(int idEquipment, Employee idEmployee, Locations idLocations, String name) {
+        this.idEquipment = idEquipment;
+        this.idEmployee = idEmployee;
+        this.idLocations = idLocations;
+        this.name = name;
+    }
 
     //gets e sets
     public int getIdEquipment() {
@@ -22,6 +27,22 @@ public class Equipment {
         this.idEquipment = idEquipment;
     }
 
+    public Employee getIdEmployee() {
+        return idEmployee;
+    }
+
+    public void setIdEmployee(Employee idEmployee) {
+        this.idEmployee = idEmployee;
+    }
+
+    public Locations getIdLocations() {
+        return idLocations;
+    }
+
+    public void setIdLocations(Locations idLocations) {
+        this.idLocations = idLocations;
+    }
+
     public String getName() {
         return name;
     }
@@ -29,7 +50,4 @@ public class Equipment {
     public void setName(String name) {
         this.name = name;
     }
-
-
-
 }
