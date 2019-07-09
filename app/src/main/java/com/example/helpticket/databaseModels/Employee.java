@@ -17,6 +17,10 @@ public class Employee {
 
     //constructor
 
+
+    public Employee() {
+    }
+
     public Employee(int idEmployee, Locations idLocation, Equipment idEquipment, String name, String email) {
         this.idEmployee = idEmployee;
         this.idLocation = idLocation;

@@ -8,6 +8,10 @@ public class Shift {
 
     //construtor
 
+
+    public Shift() {
+    }
+
     public Shift(int idShift, Date duration) {
         this.idShift = idShift;
         this.duration = duration;

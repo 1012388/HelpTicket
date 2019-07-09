@@ -11,6 +11,9 @@ public class Equipment {
     //constructor
 
 
+    public Equipment() {
+    }
+
     public Equipment(int idEquipment, Employee idEmployee, Locations idLocations, String name) {
         this.idEquipment = idEquipment;
         this.idEmployee = idEmployee;

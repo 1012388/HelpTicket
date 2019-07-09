@@ -14,7 +14,7 @@ public class Ticket {
     private Date finished_data;
     private Employee idEmployee;
     private String description;
-    //urgente
+
     private boolean pendent;//serve para o técnico ter a opção 0 não;1 sim
 
     //constructor
