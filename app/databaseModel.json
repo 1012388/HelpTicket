@@ -1,0 +1,98 @@
+{
+  "Technician" : {
+    "1": {
+      "name" : "Nélson",
+      "email": "nelson.monteiro@coficab.com",
+      "password": "1234jhj",
+      "username":"nelson.monteiro"
+    },
+    "2":{
+      "name" :"Tiago",
+      "email":"tiago.alves@coficab.com",
+      "password": "3571dsa",
+      "username":"tiago.alves"
+    },
+    "3":{
+      "name" :"Miguel",
+      "email":"miguel.santos@coficab.com" ,
+      "password":"4896dasd",
+      "username":"miguel.santos"
+    },
+    "4":{
+      "name":"Pedro",
+      "email":"pedro.cardoso@coficab.com",
+      "password":"1234jhj",
+      "username":"pedro.cardoso"
+    }
+  },
+  "Locations" : {
+    "1" : {
+      "name" : "NAV1"
+    },
+    "2": {
+      "name":"NAV2"
+    },
+    "3": {
+      "name":"NAV3"
+    },
+    "4": {
+      "name":"NAV4"
+    }
+  },
+  "Equipment" :  {
+    "20": {
+      "NAV1" :{
+        "Manuel":{
+          "name":"Improssora"
+        }
+      }
+    }
+  },
+  "Employee" : {
+    "2" : {
+      "name" : "Manuel",
+      "email" : "manuel@coficab.com"
+    }
+  },
+  "Ticket" : {
+    "0" : {
+      "Improssora": {
+        "state":false,
+        "description": "Registo da improssora na rede",
+        "requested_date" : "09/07/2019 11:15",
+        "finished_date"  : "09/07/2019 11:30"
+      }
+    }
+  },
+  "Ticket_Technician" : {
+    "30": {
+      "Manuel" : {
+        "0":{
+          "duration":"00:15"
+        }
+      }
+    }
+  },
+  "Shift" : {
+    "manhã" :{
+        "start_shift" : "08:00",
+        "end_shift" : "16:00"
+      },
+      "tarde": {
+        "start_shift" : "16:00",
+        "end_shift" : "00:00"
+      },
+      "noite": {
+        "start_shift" : "00:00",
+        "end_shift" : "08:00"
+      }
+    },
+    "Shift_Technician" :{
+      "30":{
+        "3": "Miguel",
+        "0": "manhã",
+        "date": "09/07/2019"
+      }
+    } 
+
+  }
