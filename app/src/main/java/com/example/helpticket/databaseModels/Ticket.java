@@ -11,11 +11,10 @@ public class Ticket {
     private int idTicket;
     private Equipment idEquipment;
     private Date requested_data;
-    private Date finished_data;
     private Employee idEmployee;
     private String description;
 
-    private boolean pendent;//serve para o técnico ter a opção 0 não;1 sim
+    private boolean state;//serve para o técnico ter a opção 0 não;1 sim
 
     //constructor
 
@@ -24,24 +23,22 @@ public class Ticket {
 
     }
 
-    public Ticket(int idTicket, Equipment idEquipment, Date requested_data, Date finished_data, Employee idEmployee, String description) {
+    public Ticket(int idTicket, Equipment idEquipment, Date requested_data, Employee idEmployee,String description) {
         this.idTicket = idTicket;
         this.idEquipment = idEquipment;
         this.requested_data = requested_data;
-        this.finished_data = finished_data;
         this.idEmployee = idEmployee;
         this.description = description;
-        this.pendent = false;
+        this.state = false;
     }
 
-    public Ticket(int idTicket, Equipment idEquipment,Date requested_data,Date finished_data,Employee idEmployee, String description,boolean pendent) {
+    public Ticket(int idTicket, Equipment idEquipment,Date requested_data,Employee idEmployee, String description,boolean state) {
         this.idTicket = idTicket;
         this.idEquipment = idEquipment;
         this.requested_data = requested_data;
-        this.finished_data = finished_data;
         this.idEmployee = idEmployee;
         this.description = description;
-        this.pendent = pendent;
+        this.state = state;
     }
 
     //gets and sets
@@ -70,14 +67,6 @@ public class Ticket {
         this.requested_data = requested_data;
     }
 
-    public Date getFinished_data() {
-        return finished_data;
-    }
-
-    public void setFinished_data(Date finished_data) {
-        this.finished_data = finished_data;
-    }
-
     public Employee getIdEmployee() {
         return idEmployee;
     }
@@ -95,6 +84,11 @@ public class Ticket {
     }
 
 
+    public Boolean getState() {
+        return state;
+    }
 
-
+    public void setState(Boolean state) {
+        this.state = state;
+    }
 }

@@ -11,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends Activity {
 
+   // private Databas
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
