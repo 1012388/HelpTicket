@@ -17,6 +17,10 @@ public class Locations {
 
     //constructor
 
+
+    public Locations() {
+    }
+
     public Locations(int idLocations, String name) {
         this.idLocations = idLocations;
         this.name = name;

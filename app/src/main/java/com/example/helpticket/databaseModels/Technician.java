@@ -11,7 +11,11 @@ public class Technician {
     private String password;
 
     //constructor
-    public Technician(int idTechnician, String email,String name, String username, String password) {
+
+    public Technician() {
+    }
+
+    public Technician(int idTechnician, String email, String name, String username, String password) {
         this.idTechnician = idTechnician;
         this.email = email;
         this.name = name;

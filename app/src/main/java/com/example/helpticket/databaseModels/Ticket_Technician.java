@@ -12,6 +12,10 @@ public class Ticket_Technician {
 
     //construtor
 
+
+    public Ticket_Technician() {
+    }
+
     public Ticket_Technician(Ticket_Technician idTicket_technician, Ticket idTicket, Technician idTechnician, Date ticket_Start_Hour, Date ticket_Finish_Hour) {
         this.idTicket_technician = idTicket_technician;
         this.idTicket = idTicket;
