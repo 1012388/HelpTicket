@@ -12,17 +12,36 @@ public class Ticket {
     private Equipment idEquipment;
     private Date requested_data;
     private Date finished_data;
-    private int idEmployee;
-    private String desccription;
+    private Employee idEmployee;
+    private String description;
+    //urgente
+    private boolean pendent;//serve para o técnico ter a opção 0 não;1 sim
 
     //constructor
-    public Ticket(int idTicket, Equipment idEquipment,Date requested_data,Date finished_data, int idEmployee, String desccription) {
+
+
+    public Ticket(){
+
+    }
+
+    public Ticket(int idTicket, Equipment idEquipment, Date requested_data, Date finished_data, Employee idEmployee, String description) {
         this.idTicket = idTicket;
         this.idEquipment = idEquipment;
         this.requested_data = requested_data;
         this.finished_data = finished_data;
         this.idEmployee = idEmployee;
-        this.desccription = desccription;
+        this.description = description;
+        this.pendent = false;
+    }
+
+    public Ticket(int idTicket, Equipment idEquipment,Date requested_data,Date finished_data,Employee idEmployee, String description,boolean pendent) {
+        this.idTicket = idTicket;
+        this.idEquipment = idEquipment;
+        this.requested_data = requested_data;
+        this.finished_data = finished_data;
+        this.idEmployee = idEmployee;
+        this.description = description;
+        this.pendent = pendent;
     }
 
     //gets and sets
@@ -59,19 +78,23 @@ public class Ticket {
         this.finished_data = finished_data;
     }
 
-    public int getIdEmployee() {
+    public Employee getIdEmployee() {
         return idEmployee;
     }
 
-    public void setIdEmployee(int idEmployee) {
+    public void setIdEmployee(Employee idEmployee) {
         this.idEmployee = idEmployee;
     }
 
-    public String getDesccription() {
-        return desccription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesccription(String desccription) {
-        this.desccription = desccription;
+    public void setDescription(String description) {
+        this.description = description;
     }
+
+
+
+
 }
