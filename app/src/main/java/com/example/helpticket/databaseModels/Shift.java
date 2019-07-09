@@ -4,11 +4,17 @@ import java.util.Date;
 
 public class Shift {
     private int idShift;
-    private Date duration;
+    private int duration;
+    private Date startShift;//hora_inicio do turno
+    private Date endShift;//hora_fim do turno
+
 
     //construtor
 
-    public Shift(int idShift, Date duration) {
+    public Shift(){
+
+    }
+    public Shift(int idShift, int duration) {
         this.idShift = idShift;
         this.duration = duration;
     }
@@ -25,11 +31,29 @@ public class Shift {
         this.idShift = idShift;
     }
 
-    public Date getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(Date duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
+
+    public Date getStartShift() {
+        return startShift;
+    }
+
+    public void setStartShift(Date startShift) {
+        this.startShift = startShift;
+    }
+
+    public Date getEndShift() {
+        return endShift;
+    }
+
+    public void setEndShift(Date endShift) {
+        this.endShift = endShift;
+    }
+
+
 }
