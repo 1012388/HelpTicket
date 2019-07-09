@@ -1,6 +1,7 @@
 package com.example.helpticket.mainModel;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +17,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        Button btnNewTicket = (Button) findViewById(R.id.btnNew);
+        Button btnNewTicket    = (Button) findViewById(R.id.btnNew);
         Button btnUpdateTicket = (Button) findViewById(R.id.btnUpdate);
         Button btnDeleteTicket = (Button) findViewById(R.id.btnDelete);
         Button btnSearchTicket = (Button) findViewById(R.id.btnSearch);
@@ -74,11 +75,11 @@ public class MainActivity extends Activity {
 
     public void showCreateNewTicket() {
 
-        //Intent intent = new Intent(this, showMainActivity.class);
+        Intent intent = new Intent(this, CreateTicketActivity.class);
 
 
         // intent.putExtra();//Para passar valores de uma atividade para outra
-        // startActivity(intent);
+         startActivity(intent);
     }
 
     //TODO:Criar as classes para os vários layouts
