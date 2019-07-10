@@ -63,17 +63,17 @@
       "email" : "manuel@coficab.com"
     }
   ],
-  "Ticket" :[
+  "Ticket" : [
     {
       "idTicket":0 ,
       "requested_date" : "09/07/2019 11:15",
       "finished_date"  : "09/07/2019 11:30",
       "idEquipment": 20,
       "state":false,
-      "description": "Registo da improssora na rede",
-
+      "description": "Registo da improssora na rede"
     }
   ],
+
   "Ticket_Technician" : [
     {
       "idTicket_Technician" :30,
@@ -102,7 +102,7 @@
       "end_shift" : "08:00"
       }
     ],
-    "Shift_Technician" :[
+    "Shift_Technician" : [
       {
         "idShift_Technician":"30",
         "id_Technician":"3",
