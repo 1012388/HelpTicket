@@ -3,7 +3,11 @@
 
 package com.example.helpticket.databaseModels;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Ticket {
 
@@ -19,12 +23,11 @@ public class Ticket {
     //constructor
 
 
-    public Ticket(){
+    public Ticket(int idEquipment, Date requested_date, int idEmployee, String description, Boolean state){
 
     }
 
-    public Ticket(int idTicket, Equipment idEquipment, Date requested_data, Employee idEmployee,String description) {
-        this.idTicket = idTicket;
+    public Ticket( Technician idTech,Equipment idEquipment, Date requested_data, Employee idEmployee,String description,Boolean state) {
         this.idEquipment = idEquipment;
         this.requested_data = requested_data;
         this.idEmployee = idEmployee;
@@ -32,14 +35,20 @@ public class Ticket {
         this.state = false;
     }
 
-    public Ticket(int idTicket, Equipment idEquipment,Date requested_data,Employee idEmployee, String description,boolean state) {
-        this.idTicket = idTicket;
-        this.idEquipment = idEquipment;
-        this.requested_data = requested_data;
-        this.idEmployee = idEmployee;
-        this.description = description;
-        this.state = state;
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("idTicket", idTicket);
+        result.put("idEquipment", idEquipment);
+        result.put("idEmployee", idEmployee);
+        result.put("requested_data", requested_data);
+        result.put("description", description);
+        result.put("state", state);
+
+        return result;
     }
+
+
 
     //gets and sets
 

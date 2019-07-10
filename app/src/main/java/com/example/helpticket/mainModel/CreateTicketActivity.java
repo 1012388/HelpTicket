@@ -4,32 +4,51 @@ import android.os.Bundle;
 
 import com.example.helpticket.databaseModels.Employee;
 import com.example.helpticket.databaseModels.Equipment;
+import com.example.helpticket.databaseModels.Locations;
 import com.example.helpticket.databaseModels.Shift_Technician;
+import com.example.helpticket.databaseModels.Technician;
 import com.example.helpticket.databaseModels.Ticket;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.helpticket.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Tag;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateTicketActivity extends AppCompatActivity {
 
+    private static final String TAG = "CreateTicketActivity";
     private DatabaseReference mDatabase;
     private Ticket ticket;
+    private Equipment equipment;
+    private Technician technician;
 
+    private Employee employee;
+    String ticketId;
+    Date currentTime ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,74 +60,46 @@ public class CreateTicketActivity extends AppCompatActivity {
 
         TextView textViewTech = (TextView) findViewById(R.id.textViewTech);
         TextView textViewTech1 = (TextView) findViewById(R.id.textViewTech1);
-        TextView textViewDate = (TextView) findViewById(R.id.textViewDate);
         TextView textViewDate1 = (TextView) findViewById(R.id.textViewDate1);
         TextView textViewDesc = (TextView) findViewById(R.id.textViewDesc);
-        final TextView textViewDesc1 = (TextView) findViewById(R.id.textViewDesc1);
+        final EditText editTextDesc = (EditText) findViewById(R.id.editTextDesc);
         TextView textViewEmp = (TextView) findViewById(R.id.textViewEmp);
-        final TextView textViewEmp1 = (TextView) findViewById(R.id.textViewEmp1);
+        final Spinner spinnerEmp = (Spinner) findViewById(R.id.spinnerEmp);
         TextView textViewState = (TextView) findViewById(R.id.textViewState);
         TextView textViewState1 = (TextView) findViewById(R.id.textViewState1);
         TextView textViewNumTicket = (TextView) findViewById(R.id.textViewNumTicket);
         TextView textViewLoc = (TextView) findViewById(R.id.textViewLoc);
         TextView textViewEquip = (TextView) findViewById(R.id.textViewEquip);
-        TextView textViewEquip1 = (TextView) findViewById(R.id.textViewEquip1);
+        final Spinner spinnerEquip = (Spinner) findViewById(R.id.spinnerEquip);
 
-        Spinner spinnerLoc = (Spinner) findViewById(R.id.spinnerLoc);
+        final Spinner spinnerLoc = (Spinner) findViewById(R.id.spinnerLoc);
         final Button btnCreateTicket = (Button) findViewById(R.id.btnCreateTicket);
 
-        final Date currentTime = Calendar.getInstance().getTime();
+
+
+        final String equipName = spinnerEquip.getSelectedItem().toString();
+        final String empName = spinnerEmp.getSelectedItem().toString();
+        String  locName = spinnerLoc.getSelectedItem().toString();
+
+        currentTime = Calendar.getInstance().getTime();
+
 
         textViewDate1.setText(currentTime.toString());
         //textViewEmp1.setText();
+        FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
+        //Creating a path for Ticket
+        DatabaseReference ticket = instance.getReference("Ticket");
 
-        btnCreateTicket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment").equalTo(equipName).limitToFirst(1);
 
-                //idEquip = ;//Buscar das caixas de texto
-               // idEmp=;//Buscar das caixas de texto
-                //CreateTicket(currentTime, "Troca de HDD para SSD", false,,);
-
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-
-    }
-
-    public void CreateTicket(Date requested_date, String description, Boolean state, Equipment idEquipment, Employee idEmployee) {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        ticket = new Ticket(1, idEquipment, requested_date, idEmployee, description, state);
-
-        //mDatabase.child("users").child(userId).setValue(useR);
-
-
-        // [START write_message]
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        myRef.setValue("Hello, World!");
-        // [END write_message]
-
-    }
-/*
-    public void basicReadWrite() {
-
-
-        // [START read_message]
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        queryidEquip.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
+                 equipment = dataSnapshot.getValue(Equipment.class);
+                Log.d(TAG, "Equipment id is " + equipment.getIdEquipment());
             }
 
             @Override
@@ -117,7 +108,54 @@ public class CreateTicketActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-// [END read_message]
 
-    }*/
+
+
+        Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee").equalTo(empName).limitToFirst(1);
+
+        queryidEmp.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                 employee = dataSnapshot.getValue(Employee.class);
+                Log.d(TAG, "Employee id" + employee.getIdEmployee());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        btnCreateTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO:FINISH THIS ONE
+                String desc = editTextDesc.getText().toString();
+
+
+                if(TextUtils.isEmpty(ticketId)) {
+                    CreateTicket(currentTime,desc, false, equipment.getIdEquipment(),employee.getIdEmployee());
+                    Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+               }else{
+                    Snackbar.make(view, "Criado sem sucesso", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        });
+   }
+
+    public void CreateTicket(Date requested_date, String description, Boolean state, int idEquipment, int idEmployee) {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        //Creates an node and firebase generats and unique id
+        ticketId = mDatabase.push().getKey();
+
+        ticket = new Ticket(idEquipment,requested_date,idEmployee,description,state);
+
+        mDatabase.child(ticketId).setValue(ticket);
+        Map<String, Object> postValues = ticket.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/ticket/" + ticketId, postValues);
+        mDatabase.updateChildren(childUpdates);
+    }
 }
