@@ -66,12 +66,18 @@ public class MainActivity extends Activity {
 
     public void showSearchTicket() {
 
+
     }
 
     public void showDeleteTicket() {
     }
 
     public void showUpdateTicket() {
+        Intent intent = new Intent(this, SolvedTicketActivity.class);
+
+
+        startActivity(intent);
+
     }
 
     public void showCreateNewTicket() {
