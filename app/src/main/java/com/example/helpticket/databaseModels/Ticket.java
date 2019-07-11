@@ -17,7 +17,6 @@ public class Ticket {
     private Date requested_data;
     private Employee idEmployee;
     private String description;
-
     private boolean state;//serve para o técnico ter a opção 0 não;1 sim
 
     //constructor
@@ -27,7 +26,8 @@ public class Ticket {
 
     }
 
-    public Ticket( Technician idTech,Equipment idEquipment, Date requested_data, Employee idEmployee,String description,Boolean state) {
+    public Ticket(Equipment idEquipment, Date requested_data, Employee idEmployee,String description) {
+
         this.idEquipment = idEquipment;
         this.requested_data = requested_data;
         this.idEmployee = idEmployee;
@@ -97,7 +97,17 @@ public class Ticket {
         return state;
     }
 
+
     public void setState(Boolean state) {
         this.state = state;
     }
+
+
+
+
+
+
+
 }
+
+

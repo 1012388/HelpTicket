@@ -6,6 +6,7 @@ public class Shift_Technician {
     private int idShift_Technician;
     private Shift idShift;
     private Technician idTechnician;
+    private Date date;
 
     //construtor
 
@@ -13,16 +14,15 @@ public class Shift_Technician {
 
     }
 
-    public Shift_Technician(int idShift_Technician, Shift idShift, Technician idTechnician, Date startShift, Date endShift) {
+    public Shift_Technician(int idShift_Technician, Shift idShift, Technician idTechnician, Date date) {
         this.idShift_Technician = idShift_Technician;
         this.idShift = idShift;
         this.idTechnician = idTechnician;
-
+        this.date = date;
     }
 
 
     //gets and sets
-
 
     public int getIdShift_Technician() {
         return idShift_Technician;
@@ -49,4 +49,11 @@ public class Shift_Technician {
     }
 
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

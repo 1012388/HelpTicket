@@ -8,7 +8,6 @@ public class Employee {
     //fields
     private int idEmployee;
     private Locations idLocation;
-
     private Equipment idEquipment;
     private String name;
     private String email;
