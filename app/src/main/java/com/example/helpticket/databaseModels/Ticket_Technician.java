@@ -6,22 +6,20 @@ public class Ticket_Technician {
     private Ticket_Technician idTicket_technician;
     private Ticket idTicket;
     private Technician idTechnician;
-    private Date Ticket_Start_Hour;
-    private Date Ticket_Finish_Hour;
+    private Date duration;
+
 
 
     //construtor
-
-
     public Ticket_Technician() {
     }
 
-    public Ticket_Technician(Ticket_Technician idTicket_technician, Ticket idTicket, Technician idTechnician, Date ticket_Start_Hour, Date ticket_Finish_Hour) {
+    public Ticket_Technician(Ticket_Technician idTicket_technician, Ticket idTicket, Technician idTechnician, Date duration) {
         this.idTicket_technician = idTicket_technician;
         this.idTicket = idTicket;
         this.idTechnician = idTechnician;
-        Ticket_Start_Hour = ticket_Start_Hour;
-        Ticket_Finish_Hour = ticket_Finish_Hour;
+        this.duration=duration;
+
     }
 
 
@@ -52,19 +50,11 @@ public class Ticket_Technician {
         this.idTechnician = idTechnician;
     }
 
-    public Date getTicket_Start_Hour() {
-        return Ticket_Start_Hour;
+    public Date getDuration() {
+        return duration;
     }
 
-    public void setTicket_Start_Hour(Date ticket_Start_Hour) {
-        Ticket_Start_Hour = ticket_Start_Hour;
-    }
-
-    public Date getTicket_Finish_Hour() {
-        return Ticket_Finish_Hour;
-    }
-
-    public void setTicket_Finish_Hour(Date ticket_Finish_Hour) {
-        Ticket_Finish_Hour = ticket_Finish_Hour;
+    public void setDuration(Date duration) {
+        this.duration = duration;
     }
 }
