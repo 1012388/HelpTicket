@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main_menu);
 
         Button btnNewTicket    = (Button) findViewById(R.id.btnNew);
-        Button btnUpdateTicket = (Button) findViewById(R.id.btnUpdate);
+        //Button btnUpdateTicket = (Button) findViewById(R.id.btnUpdate);
         Button btnDeleteTicket = (Button) findViewById(R.id.btnDelete);
         Button btnSearchTicket = (Button) findViewById(R.id.btnSearch);
 
@@ -33,15 +33,6 @@ public class MainActivity extends Activity {
 
         });
 
-        btnUpdateTicket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Updating a Ticket", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                showUpdateTicket();
-            }
-            //TODO:
-        });
         btnDeleteTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +45,7 @@ public class MainActivity extends Activity {
         btnSearchTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Searching a new Ticket", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Searching a  Ticket", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 showSearchTicket();
             }
@@ -66,19 +57,15 @@ public class MainActivity extends Activity {
 
     public void showSearchTicket() {
 
+        Intent intent = new Intent(this, AllTicketActivity.class);
 
+
+        startActivity(intent);
     }
 
     public void showDeleteTicket() {
     }
 
-    public void showUpdateTicket() {
-        Intent intent = new Intent(this, SolvedTicketActivity.class);
-
-
-        startActivity(intent);
-
-    }
 
     public void showCreateNewTicket() {
 

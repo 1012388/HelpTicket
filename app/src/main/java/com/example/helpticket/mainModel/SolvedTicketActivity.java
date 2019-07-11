@@ -111,12 +111,13 @@ public class SolvedTicketActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                Log.w(TAG,"Failed to read "+databaseError.toException());
+                Log.w(TAG,"Failed to read " + databaseError.toException());
             }
         });
 
 
     }
+
     public static class EntryViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button ticket;
@@ -132,7 +133,8 @@ public class SolvedTicketActivity extends AppCompatActivity {
             ticket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Abrir o novo ticket
+                    //TODO:Abrir o novo ticket
+                    // Abrir details
                 }
             });
         }
