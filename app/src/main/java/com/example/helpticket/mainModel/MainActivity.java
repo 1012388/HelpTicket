@@ -76,7 +76,6 @@ public class MainActivity extends Activity {
          startActivity(intent);
     }
 
-    //TODO:Criar as classes para os vários layouts
     //TODO:Para o spinner no create fazer o que está na página https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
     //TODO:Detalhes antes de for resolvido, detalhes depois de for resolvido
     //TODO:Relatório, tem de mostrar todos os pedidos que um técnico fez nesse dia. Poder ver sempre os relatórios antigos.

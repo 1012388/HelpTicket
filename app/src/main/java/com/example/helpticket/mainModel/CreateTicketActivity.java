@@ -129,7 +129,7 @@ public class CreateTicketActivity extends AppCompatActivity {
         btnCreateTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO:FINISH THIS ONE
+                //TODO:FINISH THIS ONE(Finished? Check)
                 String desc = editTextDesc.getText().toString();
 
 
