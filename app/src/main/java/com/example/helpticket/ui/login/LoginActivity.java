@@ -52,13 +52,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password);
-        loginButton = findViewById(R.id.emailSignInButton);
+        progressBar      = findViewById(R.id.progressBar);
+
+        findViewById(R.id.emailSignInButton).setOnClickListener(this);
+        findViewById(R.id.emailCreateAccountButton).setOnClickListener(this);
+        findViewById(R.id.signOutButton).setOnClickListener(this);
+        findViewById(R.id.signedInButtons).setOnClickListener(this);
+
+
+
+
 
         FirebaseApp.initializeApp(this);
-        FirebaseAuth.getInstance();
+        mAtuth = FirebaseAuth.getInstance();
+
     }
 
-    private void showMainMenu(Editable username, Editable password) {
+    private void showMainMenu(String username,String password) {
         Intent intent = new Intent(this, MainActivity.class);
 
         intent.putExtra("Username",username);
@@ -80,10 +90,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            //If sucess then update the ui and open the new Activity
                             Log.d(TAG,"signInWithEmai:sucess");
                             FirebaseUser user = mAtuth.getCurrentUser();
                             updateUI(user);
-                        }else{
+                            showMainMenu(usernameEditText.getText().toString(), passwordEditText.getText().toString());
+                        }else{//else errors
                             Log.w(TAG,"signInWithEmai:failure",task.getException());
                             Toast.makeText(LoginActivity.this,"Authentication failed.",Toast.LENGTH_SHORT).show();
                             updateUI(null);
@@ -126,12 +138,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private boolean validateForm() {
+    public boolean validateForm() {
         boolean valid = true;
         String email = usernameEditText.getText().toString();
         if (TextUtils.isEmpty(email)){
             usernameEditText.setError("Required.");
-            valid = true;
+            valid = false;
         }else
         {
             usernameEditText.setError(null);
@@ -140,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = usernameEditText.getText().toString();
         if (TextUtils.isEmpty(password )){
             passwordEditText.setError("Required.");
-            valid = true;
+            valid = false;
         }else
         {
             passwordEditText.setError(null);
@@ -150,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return valid;
     }
 
-    private void updateUI(FirebaseUser user){
+    public void updateUI(FirebaseUser user){
         hideProgressDialog();
         if(user != null){
             mStatusTextView.setText("Email user : "+user.getDisplayName() +
@@ -178,10 +190,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         int i = v.getId();
         if (i == R.id.emailCreateAccountButton) {
             createAccount(usernameEditText.getText().toString(), passwordEditText.getText().toString());
-        } else if (i == R.id.signedInButtons) {
+            Toast.makeText(LoginActivity.this, "Criar conta", Toast.LENGTH_SHORT).show();
+        } else if (i == R.id.emailSignInButton) {
             signIn(usernameEditText.getText().toString(), passwordEditText.getText().toString());
-        } else if (i == R.id.signedInButtons) {//Botão para signOut
+            Toast.makeText(LoginActivity.this, "Entrar...", Toast.LENGTH_SHORT).show();
+        } else if (i == R.id.signOutButton) {//Botão para signOut
             signOut();
+
         }
     }
 
@@ -190,11 +205,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         super.onStart();
 
-        FirebaseUser currentUser = mAtuth.getCurrentUser();
-        updateUI(currentUser);
+        mAtuth = FirebaseAuth.getInstance();
 
+        new FirebaseAuth.AuthStateListener(){
+
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser currentUser = mAtuth.getCurrentUser();
+                if(currentUser != null){
+                    //está ligado
+                    Log.d(TAG,"onAuthStateChanged:sign_in"+currentUser);
+                    updateUI(currentUser);
+
+                }else{
+                    Log.d(TAG,"onAuthStateChanged:sign_out");
+                    updateUI(null);
+
+                }
+            }
+        };
     }
-    private void createAccount(String email,String password){
+
+    public void createAccount(String email,String password){
         Log.d(TAG,"createAccount:"+email);
         if(!validateForm()) return;
 
@@ -220,7 +252,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
     }
 
-    private void singIn(String email,String password){
+    public void singIn(String email,String password){
         Log.d(TAG,"signIn:"+email);
         if(!validateForm()) return;
 
@@ -248,12 +280,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void signOut(){
+    public void signOut(){
         mAtuth.signOut();
         updateUI(null);
+        finish();
     }
 
-    private void hideProgressDialog(){
+    public void hideProgressDialog(){
         progressBar = new ProgressBar(LoginActivity.this,null,android.R.attr.progressBarStyleLarge);
         progressBar.setVisibility(View.GONE); //TO Hide ProgressBar
     }
