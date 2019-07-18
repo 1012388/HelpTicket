@@ -1,5 +1,6 @@
 package com.example.helpticket.mainModel;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.helpticket.databaseModels.Ticket;
@@ -119,7 +120,7 @@ import java.util.List;
 
         }
 
-        public static class EntryViewHolder extends RecyclerView.ViewHolder {
+        public class EntryViewHolder extends RecyclerView.ViewHolder {
             View mView;
             Button ticket;
             public EntryViewHolder(View itemView) {
@@ -134,11 +135,15 @@ import java.util.List;
                 ticket.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //TODO:Abrir o novo ticket
-                        // Abrir details
+                        showDetailsTIcket();
                     }
                 });
             }
 
+        }
+        public void showDetailsTIcket(){
+            Intent intent = new Intent(this, DetailsActivity.class);
+            //intent.putExtra("IDTicket",ticket.getIdTicket());
+            startActivity(intent);
         }
 }

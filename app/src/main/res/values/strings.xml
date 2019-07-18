@@ -19,4 +19,5 @@
     <string name="unsolved_tickets">Unsolved Tickets</string>
     <string name="title_activity_unsolved_ticket">UnsolvedTicketActivity</string>
     <string name="title_activity_all_ticket">AllTicketActivity</string>
+    <string name="title_activity_details">DetailsActivity</string>
 </resources>
