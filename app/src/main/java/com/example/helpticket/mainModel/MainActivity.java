@@ -10,9 +10,6 @@ import com.example.helpticket.R;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends Activity {
-
-   // private Databas
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +48,6 @@ public class MainActivity extends Activity {
             }
 
         });
-
-
     }
 
     public void showSearchTicket() {
@@ -72,13 +67,11 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, CreateTicketActivity.class);
 
 
-        // intent.putExtra();//Para passar valores de uma atividade para outra
+
          startActivity(intent);
     }
 
-    //TODO:Para o spinner no create fazer o que está na página https://stackoverflow.com/questions/13377361/how-to-create-a-drop-down-list
     //TODO:Detalhes antes de for resolvido, detalhes depois de for resolvido
     //TODO:Relatório, tem de mostrar todos os pedidos que um técnico fez nesse dia. Poder ver sempre os relatórios antigos.
-    //TODO:Create falta colocar spinner também os equipamentos que estão associados à pessoa.
 }
 

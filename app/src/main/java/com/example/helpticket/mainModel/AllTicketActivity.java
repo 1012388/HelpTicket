@@ -25,39 +25,16 @@ public class AllTicketActivity extends AppCompatActivity {
 
         Button buttonSolved     = (Button) findViewById(R.id.buttonSolved);
         Button buttonNotSolved  = (Button) findViewById(R.id.buttonNotSolved);
-
-
     }
 
     public void showUnsolvedTickets(View view) {
         Intent intent = new Intent(this, UnsolvedTicketActivity.class);
-
-
         startActivity(intent);
-        //Cena do intent
     }
 
     public void showSolvedTickets(View view) {
-
         Intent intent = new Intent(this, SolvedTicketActivity.class);
-
-
         startActivity(intent);
     }
 
 }
-
-/*
-public class AllTicketActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_ticket);
-
-
-
-    }
-
-
-}*/

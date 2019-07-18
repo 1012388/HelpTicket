@@ -162,15 +162,12 @@ public class CreateTicketActivity extends AppCompatActivity {
         btnCreateTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO:FINISH THIS ONE(Finished? Check)
-                String desc = editTextDesc.getText().toString();
-
-
+               String desc = editTextDesc.getText().toString();
                 if(TextUtils.isEmpty(ticketId)) {
                     CreateTicket(currentTime,desc, false,equipment.getIdEquipment() ,employee.getIdEmployee());
                     Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-               }else{
+                }else{
                     Snackbar.make(view, "Criado sem sucesso", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
