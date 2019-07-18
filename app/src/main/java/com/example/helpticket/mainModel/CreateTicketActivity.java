@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -33,9 +34,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.core.Tag;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CreateTicketActivity extends AppCompatActivity {
@@ -100,6 +103,21 @@ public class CreateTicketActivity extends AppCompatActivity {
                 // whenever data at this location is updated.
                  equipment = dataSnapshot.getValue(Equipment.class);
                 Log.d(TAG, "Equipment id is " + equipment.getIdEquipment());
+
+                final List<String> equipName = new ArrayList<String>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String equipNameFromSnapshot = snapshot.getValue(String.class);
+
+                    equipName.add(equipNameFromSnapshot);
+                }
+                Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this,android.R.layout.simple_spinner_item,equipName);
+                arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                spinnerEmp.setAdapter(arrayAdapter);
+
+
             }
 
             @Override
@@ -107,6 +125,9 @@ public class CreateTicketActivity extends AppCompatActivity {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
+
+
+
         });
 
 
@@ -116,8 +137,20 @@ public class CreateTicketActivity extends AppCompatActivity {
         queryidEmp.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 employee = dataSnapshot.getValue(Employee.class);
+
+                employee = dataSnapshot.getValue(Employee.class);
+                final List<String> empName = new ArrayList<String>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String empNameFromSnapshot = snapshot.getValue(String.class);
+
+                    empName.add(empNameFromSnapshot);
+                }
                 Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this,android.R.layout.simple_spinner_item,empName);
+                arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                spinnerEmp.setAdapter(arrayAdapter);
             }
 
             @Override
@@ -134,7 +167,7 @@ public class CreateTicketActivity extends AppCompatActivity {
 
 
                 if(TextUtils.isEmpty(ticketId)) {
-                    CreateTicket(currentTime,desc, false, equipment.getIdEquipment(),employee.getIdEmployee());
+                    CreateTicket(currentTime,desc, false,equipment.getIdEquipment() ,employee.getIdEmployee());
                     Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                }else{
@@ -143,13 +176,12 @@ public class CreateTicketActivity extends AppCompatActivity {
                 }
             }
         });
-   }
+    }
 
     public void CreateTicket(Date requested_date, String description, Boolean state, int idEquipment, int idEmployee) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         //Creates an node and firebase generats and unique id
         ticketId = mDatabase.push().getKey();
-
         ticket = new Ticket(idEquipment,requested_date,idEmployee,description,state);
 
         mDatabase.child(ticketId).setValue(ticket);
