@@ -5,12 +5,9 @@ import android.os.Bundle;
 import com.example.helpticket.databaseModels.Ticket;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,7 +55,7 @@ import java.util.List;
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            getuUnsolvedTickets();
+            getUnsolvedTickets();
         }
 
 
@@ -98,7 +95,7 @@ import java.util.List;
             firebaseRecyclerAdapter.stopListening();
         }
 
-        private void getuUnsolvedTickets() {
+        private void getUnsolvedTickets() {
             FirebaseDatabase instance = FirebaseDatabase.getInstance();
             final DatabaseReference ticketPath = instance.getReference("Ticket");
 
