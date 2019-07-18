@@ -1,6 +1,7 @@
 package com.example.helpticket.mainModel;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseReference mDatabase;
+    private Ticket ticket;
 
 
     private FirebaseRecyclerAdapter<TicketData, EntryViewHolder> firebaseRecyclerAdapter;
@@ -48,6 +50,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
         reference.keepSynced(true);
 
+        //TODO:TRY CATCH ON QUERIES???????
         Query queryState = reference.orderByChild("state");//Hopefully gets the tickets with the state true
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -94,17 +97,17 @@ public class SolvedTicketActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    private void getSolvedTickets() {
+    public void getSolvedTickets() {
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
         final DatabaseReference ticketPath = instance.getReference("Ticket");
 
         Query queryIdSolvedTicket = instance.getReference("Ticket").orderByChild("state").equalTo(1);
 
-        queryIdSolvedTicket.addValueEventListener(new ValueEventListener() {
+        queryIdSolvedTicket.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Ticket ticket = dataSnapshot.getValue(Ticket.class);
+                ticket = dataSnapshot.getValue(Ticket.class);
                 Log.d(TAG, "Solved Ticket Id is " + ticket.getIdTicket());
             }
 
@@ -118,7 +121,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
 
     }
 
-    public static class EntryViewHolder extends RecyclerView.ViewHolder {
+    public class EntryViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button ticket;
         public EntryViewHolder(View itemView) {
@@ -133,11 +136,18 @@ public class SolvedTicketActivity extends AppCompatActivity {
             ticket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO:Abrir o novo ticket
-                    // Abrir details
+                    showDetailsTIcket();
+
+
                 }
             });
         }
 
+    }
+
+    public void showDetailsTIcket(){
+        Intent intent = new Intent(this, DetailsActivity.class);
+        intent.putExtra("IDTicket",ticket.getIdTicket());
+        startActivity(intent);
     }
 }

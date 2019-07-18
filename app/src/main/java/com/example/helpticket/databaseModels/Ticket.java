@@ -14,7 +14,7 @@ public class Ticket {
     //fields
     private int idTicket;
     private Equipment idEquipment;
-    private Date requested_data;
+    private Date requested_date;
     private Employee idEmployee;
     private String description;
     private boolean state;//serve para o técnico ter a opção 0 não;1 sim
@@ -29,7 +29,7 @@ public class Ticket {
     public Ticket(Equipment idEquipment, Date requested_data, Employee idEmployee,String description) {
 
         this.idEquipment = idEquipment;
-        this.requested_data = requested_data;
+        this.requested_date = requested_data;
         this.idEmployee = idEmployee;
         this.description = description;
         this.state = false;
@@ -41,7 +41,7 @@ public class Ticket {
         result.put("idTicket", idTicket);
         result.put("idEquipment", idEquipment);
         result.put("idEmployee", idEmployee);
-        result.put("requested_data", requested_data);
+        result.put("requested_date", requested_date);
         result.put("description", description);
         result.put("state", state);
 
@@ -68,12 +68,12 @@ public class Ticket {
         this.idEquipment = idEquipment;
     }
 
-    public Date getRequested_data() {
-        return requested_data;
+    public Date getRequested_date() {
+        return requested_date;
     }
 
-    public void setRequested_data(Date requested_data) {
-        this.requested_data = requested_data;
+    public void setRequested_date(Date requested_date) {
+        this.requested_date = requested_date;
     }
 
     public Employee getIdEmployee() {

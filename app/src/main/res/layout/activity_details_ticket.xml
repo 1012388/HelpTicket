@@ -5,26 +5,9 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textViewTech1"
-        android:layout_width="206dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textViewNumTicket"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginLeft="180dp"
-        android:layout_marginTop="297dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="382dp" />
-
-    <TextView
         android:id="@+id/textViewTech"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_width="381dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -32,30 +15,12 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="11dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="300dp"
-        android:layout_marginEnd="269dp"
-        android:layout_marginRight="269dp"
-        android:layout_marginBottom="380dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginTop="308dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginBottom="372dp"
         android:text="Tech:" />
-
-    <TextView
-        android:id="@+id/textViewDesc1"
-        android:layout_width="209dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginLeft="180dp"
-        android:layout_marginTop="168dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="525dp"
-        android:text="" />
 
     <TextView
         android:id="@+id/textViewNumTicket"
@@ -73,29 +38,11 @@
         android:layout_marginEnd="30dp"
         android:layout_marginRight="25dp"
         android:layout_marginBottom="689dp"
-        android:text="Ticket Numnber " />
+        android:text="Ticket Number" />
 
     <TextView
         android:id="@+id/textViewDate"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_alignTop="@+id/textViewNumTicket"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="350dp"
-        android:layout_marginEnd="275dp"
-        android:layout_marginRight="275dp"
-        android:layout_marginBottom="329dp"
-        android:text="Date:" />
-
-    <TextView
-        android:id="@+id/textViewDate1"
-        android:layout_width="206dp"
+        android:layout_width="387dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
@@ -103,17 +50,18 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="184dp"
-        android:layout_marginLeft="184dp"
-        android:layout_marginTop="346dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="21dp"
-        android:layout_marginBottom="333dp" />
+        android:layout_marginStart="11dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginTop="357dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginRight="13dp"
+        android:layout_marginBottom="321dp"
+        android:text="Date:" />
 
     <TextView
         android:id="@+id/textViewEmp"
-        android:layout_width="127dp"
-        android:layout_height="39dp"
+        android:layout_width="382dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -123,15 +71,15 @@
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="200dp"
-        android:layout_marginEnd="269dp"
-        android:layout_marginRight="270dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
         android:layout_marginBottom="470dp"
         android:text="Employee:" />
 
     <TextView
         android:id="@+id/textViewLoc"
-        android:layout_width="127dp"
-        android:layout_height="39dp"
+        android:layout_width="386dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -141,15 +89,15 @@
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="270dp"
-        android:layout_marginRight="270dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginRight="13dp"
         android:layout_marginBottom="627dp"
         android:text="Location:" />
 
     <TextView
         android:id="@+id/textViewEquip"
-        android:layout_width="127dp"
-        android:layout_height="39dp"
+        android:layout_width="385dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -159,15 +107,15 @@
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="100dp"
-        android:layout_marginEnd="270dp"
-        android:layout_marginRight="270dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginRight="14dp"
         android:layout_marginBottom="578dp"
         android:text="Equipment:" />
 
     <TextView
         android:id="@+id/textViewDesc"
-        android:layout_width="127dp"
-        android:layout_height="39dp"
+        android:layout_width="387dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -177,15 +125,15 @@
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="150dp"
-        android:layout_marginEnd="270dp"
-        android:layout_marginRight="270dp"
-        android:layout_marginBottom="530dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="529dp"
         android:text="Description:" />
 
     <TextView
         android:id="@+id/textViewState"
-        android:layout_width="127dp"
-        android:layout_height="39dp"
+        android:layout_width="382dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -194,80 +142,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginEnd="267dp"
-        android:layout_marginRight="270dp"
-        android:layout_marginBottom="430dp"
+        android:layout_marginTop="261dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginBottom="417dp"
         android:text="State:" />
-
-    <Button
-        android:id="@+id/btnUpdateTicket"
-        android:layout_width="202dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginLeft="180dp"
-        android:layout_marginTop="59dp"
-        android:layout_marginEnd="23dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="621dp" />
-
-    <TextView
-        android:id="@+id/textViewState1"
-        android:layout_width="209dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginLeft="180dp"
-        android:layout_marginTop="263dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="430dp" />
-
-    <TextView
-        android:id="@+id/textViewEmp1"
-        android:layout_width="209dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginLeft="180dp"
-        android:layout_marginTop="219dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="474dp"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/textViewEquip1"
-        android:layout_width="209dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="180dp"
-        android:layout_marginLeft="180dp"
-        android:layout_marginTop="117dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="576dp"
-        android:text="" />
 
 </RelativeLayout>
