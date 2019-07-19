@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
                         .setAction("Action", null).show();
                 showDeleteTicket();
             }
-            //TODO:
+
         });
         btnSearchTicket.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
          startActivity(intent);
     }
 
-    //TODO:Detalhes antes de for resolvido, detalhes depois de for resolvido
+
     //TODO:Relatório, tem de mostrar todos os pedidos que um técnico fez nesse dia. Poder ver sempre os relatórios antigos.
 }
 

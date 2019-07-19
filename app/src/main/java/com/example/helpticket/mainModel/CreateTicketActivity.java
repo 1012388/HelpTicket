@@ -51,7 +51,7 @@ public class CreateTicketActivity extends AppCompatActivity {
 
     private Employee employee;
     String ticketId;
-    Date currentTime ;
+    public Date currentTime ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,23 +65,19 @@ public class CreateTicketActivity extends AppCompatActivity {
         TextView textViewTech1 = (TextView) findViewById(R.id.textViewTech1);
         TextView textViewDate1 = (TextView) findViewById(R.id.textViewDate1);
         TextView textViewDesc = (TextView) findViewById(R.id.textViewDesc);
-        final EditText editTextDesc = (EditText) findViewById(R.id.editTextDesc);
+        EditText editTextDesc = (EditText) findViewById(R.id.editTextDesc);
         TextView textViewEmp = (TextView) findViewById(R.id.textViewEmp);
-        final Spinner spinnerEmp = (Spinner) findViewById(R.id.spinnerEmp);
+        Spinner spinnerEmp = (Spinner) findViewById(R.id.spinnerEmp);
         TextView textViewState = (TextView) findViewById(R.id.textViewState);
         TextView textViewState1 = (TextView) findViewById(R.id.textViewState1);
         TextView textViewNumTicket = (TextView) findViewById(R.id.textViewNumTicket);
         TextView textViewLoc = (TextView) findViewById(R.id.textViewLoc);
         TextView textViewEquip = (TextView) findViewById(R.id.textViewEquip);
-        final Spinner spinnerEquip = (Spinner) findViewById(R.id.spinnerEquip);
-
-        final Spinner spinnerLoc = (Spinner) findViewById(R.id.spinnerLoc);
-        final Button btnCreateTicket = (Button) findViewById(R.id.btnCreateTicket);
-
-
-
-        final String equipName = spinnerEquip.getSelectedItem().toString();
-        final String empName = spinnerEmp.getSelectedItem().toString();
+        Spinner spinnerEquip = (Spinner) findViewById(R.id.spinnerEquip);
+        Spinner spinnerLoc = (Spinner) findViewById(R.id.spinnerLoc);
+        Button btnCreateTicket = (Button) findViewById(R.id.btnCreateTicket);
+        String equipName = spinnerEquip.getSelectedItem().toString();
+        String empName = spinnerEmp.getSelectedItem().toString();
         String  locName = spinnerLoc.getSelectedItem().toString();
 
         currentTime = Calendar.getInstance().getTime();
@@ -92,7 +88,7 @@ public class CreateTicketActivity extends AppCompatActivity {
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
         //Creating a path for Ticket
-        DatabaseReference ticket = instance.getReference("Ticket");
+         instance.getReference("Ticket");
 
         Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment").equalTo(equipName).limitToFirst(1);
 
@@ -186,5 +182,8 @@ public class CreateTicketActivity extends AppCompatActivity {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/ticket/" + ticketId, postValues);
         mDatabase.updateChildren(childUpdates);
+
+        //TODO:Populate the ticket_technician class
+        //Assign the current user to the ticket
     }
 }
