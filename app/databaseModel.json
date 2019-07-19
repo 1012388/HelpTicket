@@ -67,7 +67,6 @@
     {
       "idTicket":0 ,
       "requested_date" : "09/07/2019 11:15",
-      "finished_date"  : "09/07/2019 11:30",
       "idEquipment": 20,
       "state":false,
       "description": "Registo da improssora na rede"
