@@ -1,77 +1,43 @@
 package com.example.helpticket.mainModel;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.helpticket.R;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.helpticket.ui.login.LoginActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_menu);
+        setContentView(R.layout.activity_main);
+        Button buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
+        Button buttonLogIn = (Button) findViewById(R.id.buttonLogIn);
 
-        Button btnNewTicket    = (Button) findViewById(R.id.btnNew);
-        //Button btnUpdateTicket = (Button) findViewById(R.id.btnUpdate);
-        Button btnDeleteTicket = (Button) findViewById(R.id.btnDelete);
-        Button btnSearchTicket = (Button) findViewById(R.id.btnSearch);
-
-        btnNewTicket.setOnClickListener(new View.OnClickListener() {
+        buttonLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Creating a new Ticket", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                showCreateNewTicket();
+                //TODO:ABRIR A PÁGINA DO LOGIN
+                logIn();
             }
-
         });
-
-        btnDeleteTicket.setOnClickListener(new View.OnClickListener() {
+        buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Deleting a Ticket", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                showDeleteTicket();
+                //TODO:ABRIR A PÁGINA DO SINGUP
+                // signUp();
             }
-
-        });
-        btnSearchTicket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Searching a  Ticket", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                showSearchTicket();
-            }
-
         });
     }
 
-    public void showSearchTicket() {
-
-        Intent intent = new Intent(this, AllTicketActivity.class);
-
+    private void logIn() {
+        Intent intent = new Intent(this, LoginActivity.class);
 
         startActivity(intent);
     }
-
-    public void showDeleteTicket() {
-    }
-
-
-    public void showCreateNewTicket() {
-
-        Intent intent = new Intent(this, CreateTicketActivity.class);
-
-
-
-         startActivity(intent);
-    }
-
-
-    //TODO:Relatório, tem de mostrar todos os pedidos que um técnico fez nesse dia. Poder ver sempre os relatórios antigos.
 }
-
