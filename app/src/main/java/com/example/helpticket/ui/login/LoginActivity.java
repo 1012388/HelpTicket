@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.helpticket.R;
-import com.example.helpticket.mainModel.MainActivity;
 import com.example.helpticket.mainModel.MenuActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -14,11 +13,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -53,17 +50,15 @@ public class LoginActivity extends AppCompatActivity {
     private PublicClientApplication sampleApp;
     private IAuthenticationResult authResult;
 
-    private FirebaseAuth mAtuth;
-
     private FirebaseAuth firebaseAuth;
     private MenuActivity menuActivity;
-
+    String displayName;
+    String uid;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
         callGraphButton = (Button) findViewById(R.id.callGraph);
         signOutButton = (Button) findViewById(R.id.clearCache);
@@ -97,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         FirebaseApp.initializeApp(this);
-        mAtuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("microsoft.com");
         provider.addCustomParameter("tenant", "TENANT_ID");
@@ -114,7 +109,10 @@ public class LoginActivity extends AppCompatActivity {
                                     // IdP data available in
                                     // authResult.getAdditionalUserInfo().getProfile().
                                     // The OAuth access token can also be retrieved:
-                                    // authResult.getCredential().getAccessToken().
+                                    displayName = authResult.getUser().getDisplayName();
+                                    uid = authResult.getUser().getUid();
+                                    //Use Firebase credentials to use in the queries
+                                    showMenu();
                                 }
                             })
                     .addOnFailureListener(
@@ -126,11 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                             });
         } else {
             // There's no pending result so you need to start the sign-in flow.
-            // See below.
-
-
             firebaseAuth
-                    .startActivityForSignInWithProvider(menuActivity, provider.build())
+                    .startActivityForSignInWithProvider(getActivity(), provider.build())
                     .addOnSuccessListener(
                             new OnSuccessListener<AuthResult>() {
                                 @Override
@@ -150,32 +145,31 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
 
+
+            // The user is already signed-in.
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+            firebaseUser
+                    .startActivityForReauthenticateWithProvider(getActivity(), provider.build())
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    // User is re-authenticated with fresh tokens and
+                                    // should be able to perform sensitive operations
+                                    // like account deletion and email or password
+                                    // update.
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure.
+                                }
+                            });
+
         }
-
-
-        // The user is already signed-in.
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
-        firebaseUser
-                .startActivityForReauthenticateWithProvider(menuActivity, provider.build())
-                .addOnSuccessListener(
-                        new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult) {
-                                // User is re-authenticated with fresh tokens and
-                                // should be able to perform sensitive operations
-                                // like account deletion and email or password
-                                // update.
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Handle failure.
-                            }
-                        });
-
     }
 
 
@@ -184,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
         callGraphButton.setVisibility(View.INVISIBLE);
         signOutButton.setVisibility(View.VISIBLE);
         findViewById(R.id.welcome).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " + mAtuth.getCurrentUser().getDisplayName());
+        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " + firebaseAuth.getCurrentUser().getDisplayName());
         //((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
         //      authResult.getAccount().getUsername());
         findViewById(R.id.graphData).setVisibility(View.VISIBLE);
@@ -212,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public Activity getActivity() {
-        return this;
+        return menuActivity;
     }
 
     /* Callback used in for silent acquireToken calls.
@@ -394,11 +388,11 @@ public class LoginActivity extends AppCompatActivity {
         graphText.setText(graphResponse.toString());
     }
 
-    private void showMainMenu(String username, String password) {
+    private void showMenu() {
         Intent intent = new Intent(this, MenuActivity.class);
 
-        intent.putExtra("Username", username);
-        intent.putExtra("Password", password);
+        intent.putExtra("Firebase User id", uid);
+        intent.putExtra("Firebase User Name", displayName);
 
         startActivity(intent);
     }
