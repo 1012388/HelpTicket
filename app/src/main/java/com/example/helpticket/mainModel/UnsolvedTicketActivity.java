@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.helpticket.databaseModels.Ticket;
+import com.example.helpticket.databaseModels.Ticket_Technician;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
@@ -19,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.helpticket.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,8 +38,10 @@ import java.util.List;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseReference mDatabase;
-
-
+        private Ticket ticket;
+        private FirebaseAuth firebaseAuth;
+        private FirebaseUser firebaseUser;
+        private Ticket_Technician ticket_technician;
     private FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder> firebaseRecyclerAdapter;
     private List<SolvedTicketActivity.EntryViewHolder> ticketList;
 
@@ -44,19 +49,11 @@ import java.util.List;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unsolved_ticket);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
-            reference.keepSynced(true);
-
-            Query queryState = reference.orderByChild("state");//Hopefully gets the tickets with the state true
-
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            getUnsolvedTickets();
         }
 
 
@@ -97,27 +94,58 @@ import java.util.List;
         }
 
         private void getUnsolvedTickets() {
-            FirebaseDatabase instance = FirebaseDatabase.getInstance();
-            final DatabaseReference ticketPath = instance.getReference("Ticket");
+            DatabaseReference reference;
+            //Reference for Ticket node
+            reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+            reference.keepSynced(true);
 
-            Query queryIdUnsolvedTicket = instance.getReference("Ticket").orderByChild("state").equalTo(0);
+            String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
-            queryIdUnsolvedTicket.addValueEventListener(new ValueEventListener() {
+            //TODO:TRY CATCH ON QUERIES???????
+            //Reference for Technician_Ticket node
+            try {
+                reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
 
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Ticket ticket = dataSnapshot.getValue(Ticket.class);
-                    Log.d(TAG, "Unsolved Ticket Id is " + ticket.getIdTicket());
-                }
+                Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId).limitToFirst(1);
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                ticket_technicianID.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
 
-                    Log.w(TAG,"Failed to read " + databaseError.toException());
-                }
-            });
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+
+                //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
+                Query queryState = (Query)
+                        reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
+                                .orderByChild("state").equalTo(false);
+                queryState.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        dataSnapshot.getValue(Ticket.class);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public class EntryViewHolder extends RecyclerView.ViewHolder {

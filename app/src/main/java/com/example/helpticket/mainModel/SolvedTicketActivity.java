@@ -109,36 +109,49 @@ public class SolvedTicketActivity extends AppCompatActivity {
 
         //TODO:TRY CATCH ON QUERIES???????
         //Reference for Technician_Ticket node
-        reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
-        Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId).limitToFirst(1);
-        ticket_technicianID.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
+        try {
+            reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
 
-            }
+            Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId).limitToFirst(1);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            ticket_technicianID.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
 
-            }
-        });
+                }
 
-        //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-        Query queryState = (Query)
-                reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString())).orderByChild("state").equalTo(true);
-        queryState.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataSnapshot.getValue(Ticket.class);
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
+            Query queryState = (Query)
+                    reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
+                            .orderByChild("state").equalTo(true);
+            queryState.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    dataSnapshot.getValue(Ticket.class);
 
-            }
-        });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public class EntryViewHolder extends RecyclerView.ViewHolder {
@@ -157,8 +170,6 @@ public class SolvedTicketActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     showDetailsTIcket();
-
-
                 }
             });
         }
