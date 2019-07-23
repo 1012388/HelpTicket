@@ -1,16 +1,24 @@
 package com.example.helpticket.ui.login;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.helpticket.R;
+import com.example.helpticket.mainModel.MainActivity;
 import com.example.helpticket.mainModel.MenuActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.OAuthProvider;
 import com.microsoft.identity.client.*;
 import com.microsoft.identity.client.exception.*;
 
@@ -45,7 +55,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAtuth;
 
-
+    private FirebaseAuth firebaseAuth;
+    private MenuActivity menuActivity;
 
 
     @Override
@@ -88,6 +99,83 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         mAtuth = FirebaseAuth.getInstance();
 
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("microsoft.com");
+        provider.addCustomParameter("tenant", "TENANT_ID");
+
+        Task<AuthResult> pendingResultTask = firebaseAuth.getPendingAuthResult();
+        if (pendingResultTask != null) {
+            // There's something already here! Finish the sign-in for your user.
+            pendingResultTask
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    // User is signed in.
+                                    // IdP data available in
+                                    // authResult.getAdditionalUserInfo().getProfile().
+                                    // The OAuth access token can also be retrieved:
+                                    // authResult.getCredential().getAccessToken().
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure.
+                                }
+                            });
+        } else {
+            // There's no pending result so you need to start the sign-in flow.
+            // See below.
+
+
+            firebaseAuth
+                    .startActivityForSignInWithProvider(menuActivity, provider.build())
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    // User is signed in.
+                                    // IdP data available in
+                                    // authResult.getAdditionalUserInfo().getProfile().
+                                    // The OAuth access token can also be retrieved:
+                                    // authResult.getCredential().getAccessToken().
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure.
+                                }
+                            });
+
+        }
+
+
+        // The user is already signed-in.
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        firebaseUser
+                .startActivityForReauthenticateWithProvider(menuActivity, provider.build())
+                .addOnSuccessListener(
+                        new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                // User is re-authenticated with fresh tokens and
+                                // should be able to perform sensitive operations
+                                // like account deletion and email or password
+                                // update.
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Handle failure.
+                            }
+                        });
+
     }
 
 
@@ -96,13 +184,15 @@ public class LoginActivity extends AppCompatActivity {
         callGraphButton.setVisibility(View.INVISIBLE);
         signOutButton.setVisibility(View.VISIBLE);
         findViewById(R.id.welcome).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
-                authResult.getAccount().getUsername());
+        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " + mAtuth.getCurrentUser().getDisplayName());
+        //((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
+        //      authResult.getAccount().getUsername());
         findViewById(R.id.graphData).setVisibility(View.VISIBLE);
     }
 
     /* Set the UI for signed out account */
     private void updateSignedOutUI() {
+        FirebaseAuth.getInstance().signOut();
         callGraphButton.setVisibility(View.VISIBLE);
         signOutButton.setVisibility(View.INVISIBLE);
         findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
@@ -235,6 +325,7 @@ public class LoginActivity extends AppCompatActivity {
                                     public void onAccountsRemoved(Boolean isSuccess) {
                                         if (isSuccess) {
                                             /* successfully removed account */
+                                            FirebaseAuth.getInstance().signOut();
                                         } else {
                                             /* failed to remove account */
                                         }

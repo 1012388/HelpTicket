@@ -20,4 +20,7 @@
     <string name="title_activity_unsolved_ticket">UnsolvedTicketActivity</string>
     <string name="title_activity_all_ticket">AllTicketActivity</string>
     <string name="title_activity_details">DetailsActivity</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="login">Login</string>
+    <string name="title_activity_report">ReportActivity</string>
 </resources>
