@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".mainModel.MainActivity">
@@ -14,7 +15,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="576dp"
         android:layout_marginBottom="107dp"
-        android:text="Button" />
+        android:text="@string/sign_up" />
 
     <Button
         android:id="@+id/buttonLogIn"
@@ -24,5 +25,5 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="492dp"
         android:layout_marginBottom="191dp"
-        android:text="Button" />
+        android:text="@string/login" />
 </RelativeLayout>
