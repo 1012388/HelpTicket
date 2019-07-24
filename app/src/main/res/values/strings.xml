@@ -24,4 +24,21 @@
     <string name="login">Login</string>
     <string name="title_activity_report">ReportActivity</string>
     <string name="title_activity_create_ticket">CreateTicketActivity</string>
+    <string name="Login">Login with Microsoft</string>
+    <string name="Welcome">Welcome,</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="getting_graph_data">Getting Graph Data...</string>
+    <string name="ticket_number">Ticket Number</string>
+    <string name="location">Location:</string>
+
+    <string name="description">Description:</string>
+    <string name="date">Date:</string>
+    <string name="tech">Tech:</string>
+
+    <string name="employee">Employee:</string>
+    <string name="create">Create</string>
+    <string name="ticket_description">Ticket Description</string>
+    <string name="equipment">Equipment:</string>
+    <string name="state">State</string>
+    <string name="reports">Reports</string>
 </resources>

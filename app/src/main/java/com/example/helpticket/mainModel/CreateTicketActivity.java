@@ -4,9 +4,6 @@ import android.os.Bundle;
 
 import com.example.helpticket.databaseModels.Employee;
 import com.example.helpticket.databaseModels.Equipment;
-import com.example.helpticket.databaseModels.Locations;
-import com.example.helpticket.databaseModels.Shift_Technician;
-import com.example.helpticket.databaseModels.Technician;
 import com.example.helpticket.databaseModels.Ticket;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -15,13 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,7 +27,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.core.Tag;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,34 +51,20 @@ public class CreateTicketActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_ticket);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        //RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id);
-        setSupportActionBar(toolbar);
-
-        TextView textViewTech = (TextView) findViewById(R.id.textViewTech);
-        TextView textViewTech1 = (TextView) findViewById(R.id.textViewTech1);
-        TextView textViewDate1 = (TextView) findViewById(R.id.textViewDate1);
-        TextView textViewDesc = (TextView) findViewById(R.id.textViewDesc);
+        findViewById(R.id.textViewNumTicket);
+        findViewById(R.id.spinnerLoc);
+        findViewById(R.id.spinnerEquip);
         EditText editTextDesc = (EditText) findViewById(R.id.editTextDesc);
-        TextView textViewEmp = (TextView) findViewById(R.id.textViewEmp);
         Spinner spinnerEmp = (Spinner) findViewById(R.id.spinnerEmp);
-        TextView textViewState = (TextView) findViewById(R.id.textViewState);
-        TextView textViewState1 = (TextView) findViewById(R.id.textViewState1);
-        TextView textViewNumTicket = (TextView) findViewById(R.id.textViewNumTicket);
-        TextView textViewLoc = (TextView) findViewById(R.id.textViewLoc);
-        TextView textViewEquip = (TextView) findViewById(R.id.textViewEquip);
-        Spinner spinnerEquip = (Spinner) findViewById(R.id.spinnerEquip);
-        Spinner spinnerLoc = (Spinner) findViewById(R.id.spinnerLoc);
+        findViewById(R.id.textViewState1);
+        findViewById(R.id.textViewTech1);
+        TextView textViewDate1 = (TextView) findViewById(R.id.textViewDate1);
         Button btnCreateTicket = (Button) findViewById(R.id.btnCreateTicket);
-        String equipName = spinnerEquip.getSelectedItem().toString();
-        String empName = spinnerEmp.getSelectedItem().toString();
-        String  locName = spinnerLoc.getSelectedItem().toString();
+
 
         currentTime = Calendar.getInstance().getTime();
-
-
         textViewDate1.setText(currentTime.toString());
-        //textViewEmp1.setText();
+
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
         //Creating a path for Ticket
@@ -117,11 +97,9 @@ public class CreateTicketActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
-
 
 
         });
@@ -158,15 +136,10 @@ public class CreateTicketActivity extends AppCompatActivity {
         btnCreateTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               String desc = editTextDesc.getText().toString();
-                if(TextUtils.isEmpty(ticketId)) {
-                    CreateTicket(currentTime,desc, false,equipment.getIdEquipment() ,employee.getIdEmployee());
-                    Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }else{
-                    Snackbar.make(view, "Criado sem sucesso", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
+                // String desc = editTextDesc.getText().toString();
+                //CreateTicket(currentTime,desc, false,equipment.getIdEquipment() ,employee.getIdEmployee());
+                Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
     }
@@ -186,4 +159,5 @@ public class CreateTicketActivity extends AppCompatActivity {
         //TODO:Populate the ticket_technician class
         //Assign the current user to the ticket
     }
+
 }
