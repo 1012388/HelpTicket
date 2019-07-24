@@ -20,8 +20,8 @@ public class AllTicketActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_ticket);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        // setSupportActionBar(toolbar);
 
         Button buttonSolved     = (Button) findViewById(R.id.buttonSolved);
         Button buttonNotSolved  = (Button) findViewById(R.id.buttonNotSolved);

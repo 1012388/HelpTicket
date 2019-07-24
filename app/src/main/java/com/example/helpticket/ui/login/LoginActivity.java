@@ -43,13 +43,19 @@ public class LoginActivity extends AppCompatActivity {
 
     /* UI & Debugging Variables */
     private static final String TAG = LoginActivity.class.getSimpleName();
+    public static final String TENANT_ID = "dd6f49cd-76bf-4b32-8208-a6fc02aad09e";
+    private String Application_ID = "";
+
     Button callGraphButton;
     Button signOutButton;
+
+    /*W/FirebaseRemoteConfig: No value of type 'String' exists for parameter key 'sessions_max_length_minutes'.
+    W/FirebaseRemoteConfig: No value of type 'String' exists for parameter key 'sessions_feature_enabled'.*/
 
     /* Azure AD Variables */
     private PublicClientApplication sampleApp;
     private IAuthenticationResult authResult;
-
+    private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private MenuActivity menuActivity;
     String displayName;
@@ -95,9 +101,17 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("microsoft.com");
-        provider.addCustomParameter("tenant", "TENANT_ID");
+        provider.addCustomParameter("tenant", TENANT_ID);
 
+        //https://login.microsoftonline.com/dd6f49cd-76bf-4b32-8208-a6fc02aad09e/oauth2/v2.0/token
+
+
+        authentication(provider);
+    }
+
+    private void authentication(OAuthProvider.Builder provider) {
         Task<AuthResult> pendingResultTask = firebaseAuth.getPendingAuthResult();
+        firebaseUser = firebaseAuth.getCurrentUser();
         if (pendingResultTask != null) {
             // There's something already here! Finish the sign-in for your user.
             pendingResultTask
@@ -144,31 +158,6 @@ public class LoginActivity extends AppCompatActivity {
                                     // Handle failure.
                                 }
                             });
-
-
-            // The user is already signed-in.
-            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
-            firebaseUser
-                    .startActivityForReauthenticateWithProvider(getActivity(), provider.build())
-                    .addOnSuccessListener(
-                            new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult authResult) {
-                                    // User is re-authenticated with fresh tokens and
-                                    // should be able to perform sensitive operations
-                                    // like account deletion and email or password
-                                    // update.
-                                }
-                            })
-                    .addOnFailureListener(
-                            new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle failure.
-                                }
-                            });
-
         }
     }
 
@@ -178,9 +167,10 @@ public class LoginActivity extends AppCompatActivity {
         callGraphButton.setVisibility(View.INVISIBLE);
         signOutButton.setVisibility(View.VISIBLE);
         findViewById(R.id.welcome).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " + firebaseAuth.getCurrentUser().getDisplayName());
-        //((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
-        //      authResult.getAccount().getUsername());
+        //((TextView) findViewById(R.id.welcome)).setText("Welcome, " + firebaseAuth.getCurrentUser().getDisplayName());
+
+        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
+                authResult.getAccount().getUsername());
         findViewById(R.id.graphData).setVisibility(View.VISIBLE);
     }
 
@@ -195,6 +185,9 @@ public class LoginActivity extends AppCompatActivity {
 
         Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT)
                 .show();
+
+        FirebaseAuth.getInstance().signOut();
+
     }
 
     /* Use MSAL to acquireToken for the end-user
@@ -206,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public Activity getActivity() {
-        return menuActivity;
+        return this;
     }
 
     /* Callback used in for silent acquireToken calls.
@@ -273,6 +266,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 /* update the UI to post call graph state */
                 updateSuccessUI();
+
+                showMenu();
             }
 
             @Override
