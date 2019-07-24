@@ -30,7 +30,7 @@ public class MenuActivity extends Activity {
         setContentView(R.layout.activity_main_menu);
 
         Button btnNewTicket = (Button) findViewById(R.id.btnNew);
-        //Button btnUpdateTicket = (Button) findViewById(R.id.btnUpdate);
+        Button btnReports = (Button) findViewById(R.id.btnReports);
         Button btnDeleteTicket = (Button) findViewById(R.id.btnDelete);
         Button btnSearchTicket = (Button) findViewById(R.id.btnSearch);
 
@@ -63,6 +63,16 @@ public class MenuActivity extends Activity {
 
         });
 
+        btnReports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Searching a  Ticket", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                showReports();
+
+            }
+        });
+/*
         provider = OAuthProvider.newBuilder("microsoft.com");
 
         //Force re-consent
@@ -102,8 +112,8 @@ public class MenuActivity extends Activity {
 
             if (firebaseAuth.getCurrentUser() != null) {
                 firebaseAuth
-                        .startActivityForSignInWithProvider(/* activity= */ this, provider.build())
-                        .addOnSuccessListener(
+                        .startActivityForSignInWithProvider( this, provider.build())
+                       .addOnSuccessListener(
                                 new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
@@ -131,8 +141,8 @@ public class MenuActivity extends Activity {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
                 firebaseUser
-                        .startActivityForLinkWithProvider(/* activity= */ this, provider.build())
-                        .addOnSuccessListener(
+                        .startActivityForLinkWithProvider(/* activity=  this, provider.build())
+                   /*     .addOnSuccessListener(
                                 new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
@@ -157,7 +167,15 @@ public class MenuActivity extends Activity {
 
             }
 
-        }
+        }*/
+    }
+
+    private void showReports() {
+        Intent intent = new Intent(this, ReportActivity.class);
+
+
+        startActivity(intent);
+
     }
 
 

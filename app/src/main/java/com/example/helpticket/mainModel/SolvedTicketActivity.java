@@ -107,7 +107,6 @@ public class SolvedTicketActivity extends AppCompatActivity {
 
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
-        //TODO:TRY CATCH ON QUERIES???????
         //Reference for Technician_Ticket node
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
