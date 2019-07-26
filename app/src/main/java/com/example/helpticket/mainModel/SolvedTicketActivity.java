@@ -31,9 +31,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class SolvedTicketActivity extends AppCompatActivity {
+    //This activity is to show the Solved Tickets of the current logged in user
     private static final String TAG = "SolvedTicketActivity";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -43,7 +45,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private Ticket_Technician ticket_technician;
-
+    private Calendar currentDate;
     private FirebaseRecyclerAdapter<TicketData, EntryViewHolder> firebaseRecyclerAdapter;
     private List<EntryViewHolder> ticketList;
 
@@ -89,7 +91,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
     }
 
     public void getSolvedTickets() {
-        //TODO:USE THIS QUERY TO FEED TICKET DATA
+        //TODO:MAKE THE QUERY INTERACTIVE,MEANING LET THE USER SHEARCH IN THE SOLVED TICKETS
         DatabaseReference reference;
         //Reference for Ticket node
         reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
@@ -101,7 +103,8 @@ public class SolvedTicketActivity extends AppCompatActivity {
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
 
-            Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId).limitToFirst(1);
+            Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId)
+                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString()).limitToFirst(1);
 
             ticket_technicianID.addValueEventListener(new ValueEventListener() {
                 @Override
