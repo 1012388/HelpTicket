@@ -29,6 +29,14 @@ public class ReportActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        //TODO:LOGIC OF THE ACTIVITY
+
+        //get the ticket_technician.idTickets that are stated as solved then display them into a recyclerView
+        //
+        //
+
+
     }
 
 }
