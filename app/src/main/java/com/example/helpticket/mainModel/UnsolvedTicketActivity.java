@@ -1,5 +1,4 @@
 package com.example.helpticket.mainModel;
-
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -31,17 +30,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-    public class UnsolvedTicketActivity extends AppCompatActivity {
-
+public class UnsolvedTicketActivity extends AppCompatActivity {
     private static final String TAG = "UnsolvedTicketActivity";
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseReference mDatabase;
-        private Ticket ticket;
-        private FirebaseAuth firebaseAuth;
-        private FirebaseUser firebaseUser;
-        private Ticket_Technician ticket_technician;
+    private Ticket ticket;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private Ticket_Technician ticket_technician;
     private FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder> firebaseRecyclerAdapter;
     private List<SolvedTicketActivity.EntryViewHolder> ticketList;
 
@@ -52,126 +50,112 @@ import java.util.List;
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
+                .setQuery(mDatabase, TicketData.class)
+                .build();
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder>(options) {
+            @NonNull
+            @Override
+            public UnsolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View UnsolvedTicketview = LayoutInflater.from(parent.getContext()).
+                        inflate(R.layout.activity_unsolved_ticket, parent, false);
+                return new UnsolvedTicketActivity.EntryViewHolder(UnsolvedTicketview);
+            }
 
-        }
+            @Override
+            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
+                entryViewHolder.setTitle("Ticket " + i);
+                entryViewHolder.setContent(ticketData.getContent());
+            }
+        };
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseRecyclerAdapter.stopListening();
+    }
 
-        @Override
-        protected void onStart() {
-            super.onStart();
+    private void getUnsolvedTickets() {
+        DatabaseReference reference;
+        //Reference for Ticket node
+        reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+        reference.keepSynced(true);
+        String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
-            FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                    .setQuery(mDatabase, TicketData.class)
-                    .build();
-
-            firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder>(options) {
-                @NonNull
+        //Reference for Technician_Ticket node
+        try {
+            reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
+            Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId).limitToFirst(1);
+            ticket_technicianID.addValueEventListener(new ValueEventListener() {
                 @Override
-                public UnsolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                    View UnsolvedTicketview = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_unsolved_ticket, parent, false);
-
-
-                    return new UnsolvedTicketActivity.EntryViewHolder(UnsolvedTicketview);
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
                 }
 
                 @Override
-                protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
-                    entryViewHolder.setTitle("Ticket " + i);
-                    entryViewHolder.setContent(ticketData.getContent());
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
-
-            };
-
-            recyclerView.setAdapter(firebaseRecyclerAdapter);
-            firebaseRecyclerAdapter.startListening();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        @Override
-        protected void onStop() {
-            super.onStop();
-            firebaseRecyclerAdapter.stopListening();
-        }
-
-        private void getUnsolvedTickets() {
-            DatabaseReference reference;
-            //Reference for Ticket node
+        try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
-            reference.keepSynced(true);
+            //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
+            Query queryState = (Query)
+                    reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
+                            .orderByChild("state").equalTo(false);
+            queryState.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    dataSnapshot.getValue(Ticket.class);
+                }
 
-            String currentUserId = firebaseAuth.getCurrentUser().getUid();
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            //TODO:TRY CATCH ON QUERIES???????
-            //Reference for Technician_Ticket node
-            try {
-                reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
+    public class EntryViewHolder extends RecyclerView.ViewHolder {
+        View mView;
+        Button ticket;
 
-                Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId).limitToFirst(1);
-
-                ticket_technicianID.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
-
-                //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-                Query queryState = (Query)
-                        reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
-                                .orderByChild("state").equalTo(false);
-                queryState.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        dataSnapshot.getValue(Ticket.class);
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        public EntryViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
         }
 
-        public class EntryViewHolder extends RecyclerView.ViewHolder {
-            View mView;
-            Button ticket;
-            public EntryViewHolder(View itemView) {
-                super(itemView);
-                mView = itemView;
-            }
-            public void setTitle(String title){
-                ticket = (Button) mView.findViewById(R.id.btnNewticket);
-                ticket.setText(title);
-            }
-            public void setContent(String content){
-                ticket.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showDetailsTIcket();
-                    }
-                });
-            }
+        public void setTitle(String title) {
+            ticket = (Button) mView.findViewById(R.id.btnNewticket);
+            ticket.setText(title);
+        }
 
+        public void setContent(String content) {
+            ticket.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDetailsTIcket();
+                }
+            });
         }
-        public void showDetailsTIcket(){
-            Intent intent = new Intent(this, DetailsActivity.class);
-            //intent.putExtra("IDTicket",ticket.getIdTicket());
-            startActivity(intent);
-        }
+    }
+
+    public void showDetailsTIcket() {
+        Intent intent = new Intent(this, DetailsActivity.class);
+        //intent.putExtra("IDTicket",ticket.getIdTicket());
+        startActivity(intent);
+    }
 }

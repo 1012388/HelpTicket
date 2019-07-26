@@ -22,7 +22,6 @@ public class AllTicketActivity extends AppCompatActivity {
         setContentView(R.layout.activity_all_ticket);
         //Toolbar toolbar = findViewById(R.id.toolbar);
         // setSupportActionBar(toolbar);
-
         Button buttonSolved     = (Button) findViewById(R.id.buttonSolved);
         Button buttonNotSolved  = (Button) findViewById(R.id.buttonNotSolved);
     }
@@ -36,5 +35,4 @@ public class AllTicketActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SolvedTicketActivity.class);
         startActivity(intent);
     }
-
 }

@@ -38,14 +38,15 @@ import java.util.Map;
 public class CreateTicketActivity extends AppCompatActivity {
 
     private static final String TAG = "CreateTicketActivity";
+    private Date currentTime;
+    private String equipName;
+    private Equipment equipment;
+    private Employee employee;
     private DatabaseReference mDatabase;
     private Ticket ticket;
-    private Equipment equipment;
-    private Technician technician;
-
-    private Employee employee;
-    String ticketId;
-    public Date currentTime ;
+    private String ticketId;
+    private String empName;
+    private String desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,76 +69,78 @@ public class CreateTicketActivity extends AppCompatActivity {
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
         //Creating a path for Ticket
-         instance.getReference("Ticket");
+        instance.getReference("Ticket");
 
-        Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment").equalTo(equipName).limitToFirst(1);
+        try {
+            Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment").equalTo(equipName).limitToFirst(1);
 
-        queryidEquip.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                 equipment = dataSnapshot.getValue(Equipment.class);
-                Log.d(TAG, "Equipment id is " + equipment.getIdEquipment());
+            queryidEquip.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // This method is called once with the initial value and again
+                    // whenever data at this location is updated.
+                    equipment = dataSnapshot.getValue(Equipment.class);
+                    Log.d(TAG, "Equipment id is " + equipment.getIdEquipment());
 
-                final List<String> equipName = new ArrayList<String>();
+                    final List<String> equipName = new ArrayList<String>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String equipNameFromSnapshot = snapshot.getValue(String.class);
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String equipNameFromSnapshot = snapshot.getValue(String.class);
 
-                    equipName.add(equipNameFromSnapshot);
+                        equipName.add(equipNameFromSnapshot);
+                    }
+                    Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, equipName);
+                    arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                    spinnerEmp.setAdapter(arrayAdapter);
+
+
                 }
-                Log.d(TAG, "Employee id" + employee.getIdEmployee());
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this,android.R.layout.simple_spinner_item,equipName);
-                arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                spinnerEmp.setAdapter(arrayAdapter);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
-            }
-
-
-        });
-
-
-
-        Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee").equalTo(empName).limitToFirst(1);
-
-        queryidEmp.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                employee = dataSnapshot.getValue(Employee.class);
-                final List<String> empName = new ArrayList<String>();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String empNameFromSnapshot = snapshot.getValue(String.class);
-
-                    empName.add(empNameFromSnapshot);
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.w(TAG, "Failed to read value.", databaseError.toException());
                 }
-                Log.d(TAG, "Employee id" + employee.getIdEmployee());
+            });
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this,android.R.layout.simple_spinner_item,empName);
-                arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                spinnerEmp.setAdapter(arrayAdapter);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+        try {
+            Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee").equalTo(empName).limitToFirst(1);
+
+            queryidEmp.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    employee = dataSnapshot.getValue(Employee.class);
+                    final List<String> empName = new ArrayList<String>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String empNameFromSnapshot = snapshot.getValue(String.class);
+                        empName.add(empNameFromSnapshot);
+                    }
+                    Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, empName);
+                    arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                    spinnerEmp.setAdapter(arrayAdapter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         btnCreateTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // String desc = editTextDesc.getText().toString();
-                //CreateTicket(currentTime,desc, false,equipment.getIdEquipment() ,employee.getIdEmployee());
+                desc = editTextDesc.getText().toString();
+                CreateTicket(currentTime, desc, false, equipment.getIdEquipment(), employee.getIdEmployee());
                 Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
