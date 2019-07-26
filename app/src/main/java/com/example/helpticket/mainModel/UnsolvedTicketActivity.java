@@ -47,10 +47,12 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unsolved_ticket);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+
+    //TODO:MAKE THE QUERY INTERACTIVE,MEANING LET THE USER SHEARCH IN THE UNSOLVED TICKETS
 
     @Override
     protected void onStart() {
