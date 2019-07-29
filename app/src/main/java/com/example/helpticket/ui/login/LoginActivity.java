@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.helpticket.R;
 import com.example.helpticket.mainModel.MenuActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -27,6 +30,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,352 +42,129 @@ import com.google.firebase.auth.OAuthProvider;
 import com.microsoft.identity.client.*;
 import com.microsoft.identity.client.exception.*;
 
-public class LoginActivity extends AppCompatActivity {
-
-    final static String SCOPES[] = {"https://graph.microsoft.com/User.Read"};
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
-
-    /* UI & Debugging Variables */
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
-    public static final String TENANT_ID = "dd6f49cd-76bf-4b32-8208-a6fc02aad09e";
-    private String Application_ID = "";
-
-    Button callGraphButton;
-    Button signOutButton;
-
-    /*W/FirebaseRemoteConfig: No value of type 'String' exists for parameter key 'sessions_max_length_minutes'.
-    W/FirebaseRemoteConfig: No value of type 'String' exists for parameter key 'sessions_feature_enabled'.*/
-
-    /* Azure AD Variables */
-    private PublicClientApplication sampleApp;
-    private IAuthenticationResult authResult;
     private FirebaseUser firebaseUser;
-    private FirebaseAuth firebaseAuth;
+
     private MenuActivity menuActivity;
     String displayName;
     String uid;
+    private String mCustomToken;
+    private TokenBroadcastReceiver mTokenReceiver;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        callGraphButton = (Button) findViewById(R.id.callGraph);
-        signOutButton = (Button) findViewById(R.id.clearCache);
+        //Button click listeners
+        //button.setOnClickListener(this);
 
-        callGraphButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onCallGraphClicked();
-            }
-        });
-
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onSignOutClicked();
-            }
-        });
-
-        /* Configure your sample app and save state for this activity */
-        sampleApp = new PublicClientApplication(this.getApplicationContext(),
-                R.raw.auth_config);
-
-        /* Attempt to get a user and acquireTokenSilent */
-        sampleApp.getAccounts(new PublicClientApplication.AccountsLoadedCallback() {
+        mTokenReceiver = new TokenBroadcastReceiver() {
             @Override
-            public void onAccountsLoaded(final List<IAccount> accounts) {
-                if (!accounts.isEmpty()) {
-                    /* This sample doesn't support multi-account scenarios, use the first account */
-                    sampleApp.acquireTokenSilentAsync(SCOPES, accounts.get(0), getAuthSilentCallback());
-                } else {
-                    /* No accounts */
-                }
+            public void onNewToken(String token) {
+                Log.d(TAG, "onNewToken:" + token);
+                setCustomToken(token);
             }
-        });
-        FirebaseApp.initializeApp(this);
+        };
+
+        // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        OAuthProvider.Builder provider = OAuthProvider.newBuilder("microsoft.com");
-        provider.addCustomParameter("tenant", TENANT_ID);
 
-        //https://login.microsoftonline.com/dd6f49cd-76bf-4b32-8208-a6fc02aad09e/oauth2/v2.0/token
+        FileInputStream serviceAccount = null;
+        FirebaseOptions options = null;
+        try {
+            serviceAccount = new FileInputStream("path/to/serviceAccountKey.json");
+            options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl("https://helpticket-e00ce.firebaseio.com")
+                    .build();
 
-
-        authentication(provider);
-    }
-
-    private void authentication(OAuthProvider.Builder provider) {
-        Task<AuthResult> pendingResultTask = firebaseAuth.getPendingAuthResult();
-        firebaseUser = firebaseAuth.getCurrentUser();
-        if (pendingResultTask != null) {
-            // There's something already here! Finish the sign-in for your user.
-            pendingResultTask
-                    .addOnSuccessListener(
-                            new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult authResult) {
-                                    // User is signed in.
-                                    // IdP data available in
-                                    // authResult.getAdditionalUserInfo().getProfile().
-                                    // The OAuth access token can also be retrieved:
-                                    displayName = authResult.getUser().getDisplayName();
-                                    uid = authResult.getUser().getUid();
-                                    //Use Firebase credentials to use in the queries
-                                    showMenu();
-                                }
-                            })
-                    .addOnFailureListener(
-                            new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle failure.
-                                }
-                            });
-        } else {
-            // There's no pending result so you need to start the sign-in flow.
-            firebaseAuth
-                    .startActivityForSignInWithProvider(getActivity(), provider.build())
-                    .addOnSuccessListener(
-                            new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult authResult) {
-                                    // User is signed in.
-                                    // IdP data available in
-                                    // authResult.getAdditionalUserInfo().getProfile().
-                                    // The OAuth access token can also be retrieved:
-                                    // authResult.getCredential().getAccessToken().
-                                }
-                            })
-                    .addOnFailureListener(
-                            new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle failure.
-                                }
-                            });
+            FirebaseApp.initializeApp(options);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-    /* Set the UI for successful token acquisition data */
-    private void updateSuccessUI() {
-        callGraphButton.setVisibility(View.INVISIBLE);
-        signOutButton.setVisibility(View.VISIBLE);
-        findViewById(R.id.welcome).setVisibility(View.VISIBLE);
-        //((TextView) findViewById(R.id.welcome)).setText("Welcome, " + firebaseAuth.getCurrentUser().getDisplayName());
-
-        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
-                authResult.getAccount().getUsername());
-        findViewById(R.id.graphData).setVisibility(View.VISIBLE);
+        updateUI(currentUser);
     }
 
-    /* Set the UI for signed out account */
-    private void updateSignedOutUI() {
-        FirebaseAuth.getInstance().signOut();
-        callGraphButton.setVisibility(View.VISIBLE);
-        signOutButton.setVisibility(View.INVISIBLE);
-        findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
-        findViewById(R.id.graphData).setVisibility(View.INVISIBLE);
-        ((TextView) findViewById(R.id.graphData)).setText("No Data");
+    public void onResume() {
 
-        Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT)
-                .show();
-
-        FirebaseAuth.getInstance().signOut();
-
+        super.onResume();
+        //registerReceiver(mToksignInWithCustomToken(mCustomToken)enReceiver,TokenBroadcastReceiver.getFilter())
     }
 
-    /* Use MSAL to acquireToken for the end-user
-     * Callback will call Graph api w/ access token & update UI
-     */
-    private void onCallGraphClicked() {
-        sampleApp.acquireToken(getActivity(), SCOPES, getAuthInteractiveCallback());
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mTokenReceiver);
     }
 
-
-    public Activity getActivity() {
-        return this;
-    }
-
-    /* Callback used in for silent acquireToken calls.
-     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh)
-     * else errors that we need to do an interactive request.
-     */
-    private AuthenticationCallback getAuthSilentCallback() {
-        return new AuthenticationCallback() {
-
+    public void signIn() {
+        firebaseAuth.
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onSuccess(IAuthenticationResult authenticationResult) {
-                /* Successfully got a token, call graph now */
-                Log.d(TAG, "Successfully authenticated");
-
-                /* Store the authResult */
-                authResult = authenticationResult;
-
-                /* call graph */
-                callGraphAPI();
-
-                /* update the UI to post call graph state */
-                updateSuccessUI();
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-                /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-
-                if (exception instanceof MsalClientException) {
-                    /* Exception inside MSAL, more info inside the exception */
-                } else if (exception instanceof MsalServiceException) {
-                    /* Exception when communicating with the STS, likely config issue */
-                } else if (exception instanceof MsalUiRequiredException) {
-                    /* Tokens expired or no session, retry with interactive */
-                }
-            }
-
-            @Override
-            public void onCancel() {
-                /* User cancelled the authentication */
-                Log.d(TAG, "User cancelled login.");
-            }
-        };
-    }
-
-    /* Callback used for interactive request.  If succeeds we use the access
-     * token to call the Microsoft Graph. Does not check cache
-     */
-    private AuthenticationCallback getAuthInteractiveCallback() {
-        return new AuthenticationCallback() {
-
-            @Override
-            public void onSuccess(IAuthenticationResult authenticationResult) {
-                /* Successfully got a token, call graph now */
-                Log.d(TAG, "Successfully authenticated");
-                Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
-
-                /* Store the auth result */
-                authResult = authenticationResult;
-
-                /* call graph */
-                callGraphAPI();
-
-                /* update the UI to post call graph state */
-                updateSuccessUI();
-
-                showMenu();
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-                /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-
-                if (exception instanceof MsalClientException) {
-                    /* Exception inside MSAL, more info inside the exception */
-                } else if (exception instanceof MsalServiceException) {
-                    /* Exception when communicating with the STS, likely config issue */
-                }
-            }
-
-            @Override
-            public void onCancel() {
-                /* User cancelled the authentication */
-                Log.d(TAG, "User cancelled login.");
-            }
-        };
-    }
-
-    /* Clears an account's tokens from the cache.
-     * Logically similar to "sign out" but only signs out of this app.
-     * User will get interactive SSO if trying to sign back-in.
-     */
-    private void onSignOutClicked() {
-        /* Attempt to get a user and acquireTokenSilent
-         * If this fails we do an interactive request
-         */
-        sampleApp.getAccounts(new PublicClientApplication.AccountsLoadedCallback() {
-            @Override
-            public void onAccountsLoaded(final List<IAccount> accounts) {
-
-                if (accounts.isEmpty()) {
-                    /* No accounts to remove */
-
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCustomToken:success");
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    updateUI(user);
                 } else {
-                    for (final IAccount account : accounts) {
-                        sampleApp.removeAccount(
-                                account,
-                                new PublicClientApplication.AccountsRemovedCallback() {
-                                    @Override
-                                    public void onAccountsRemoved(Boolean isSuccess) {
-                                        if (isSuccess) {
-                                            /* successfully removed account */
-                                            FirebaseAuth.getInstance().signOut();
-                                        } else {
-                                            /* failed to remove account */
-                                        }
-                                    }
-                                });
-                    }
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCustomToken:failure", task.getException());
+                    Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                    updateUI(null);
                 }
-
-                updateSignedOutUI();
             }
         });
     }
 
-    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
-        Log.d(TAG, "Starting volley request to graph");
+    private void updateUI(FirebaseUser currentUser) {
+        if (currentUser != currentUser) {
+            //PUT USERNAME IN THE TET VIEW
 
-        /* Make sure we have a token to send to graph */
-        if (authResult.getAccessToken() == null) {
-            return;
+        } else {
+            //ERROR
         }
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
-
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
-                parameters, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                /* Successfully called graph, process data and send to UI */
-                Log.d(TAG, "Response: " + response.toString());
-
-                updateGraphUI(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + authResult.getAccessToken());
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
     }
 
-    /* Sets the graph response */
-    private void updateGraphUI(JSONObject graphResponse) {
-        TextView graphText = findViewById(R.id.graphData);
-        graphText.setText(graphResponse.toString());
+    private void setCustomToken(String token) {
+        mCustomToken = token;
+
+        String status;
+        if (mCustomToken != null) {
+            status = "Token:" + mCustomToken;
+        } else {
+            status = "Token: null";
+        }
+
+        //Enable/disable the sign-in button and show the token
     }
+
+    public void onClick(View v) {
+        int i = v.getId();
+        //if(i == R.id.buttonSignIn){
+        //    startSignIn();
+        // }
+
+    }
+
+
+    public void signOut() {
+        firebaseAuth.getInstance().signOut();
+    }
+
 
     private void showMenu() {
         Intent intent = new Intent(this, MenuActivity.class);

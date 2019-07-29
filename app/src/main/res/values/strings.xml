@@ -42,4 +42,5 @@
     <string name="state">State</string>
     <string name="reports">Reports</string>
     <string name="button">Button</string>
+    <string name="title_activity_report_post">ReportActivityPOST</string>
 </resources>
