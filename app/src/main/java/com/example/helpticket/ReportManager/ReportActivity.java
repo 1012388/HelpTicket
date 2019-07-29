@@ -1,13 +1,14 @@
-package com.example.helpticket.mainModel;
+package com.example.helpticket.ReportManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.helpticket.databaseModels.Ticket;
+import com.example.helpticket.databaseModels.Ticket_Technician;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.helpticket.R;
-import com.example.helpticket.databaseModels.Equipment;
-import com.example.helpticket.databaseModels.Ticket;
-import com.example.helpticket.databaseModels.Ticket_Technician;
+import com.example.helpticket.mainModel.DetailsActivity;
+import com.example.helpticket.mainModel.SolvedTicketActivity;
+import com.example.helpticket.mainModel.TicketData;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,32 +30,40 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class SolvedTicketActivity extends AppCompatActivity {
-    //This activity is to show the Solved Tickets of the current logged in user
-    private static final String TAG = "SolvedTicketActivity";
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private DatabaseReference mDatabase;
-    private Ticket ticket;
+public class ReportActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private Ticket_Technician ticket_technician;
+    private RecyclerView recyclerView;
     private Calendar currentDate;
-    private FirebaseRecyclerAdapter<TicketData, EntryViewHolder> firebaseRecyclerAdapter;
-    private List<EntryViewHolder> ticketList;
+    private Ticket_Technician ticket_technician;
+    private List<String> ticketList;
+    private Ticket ticket;
+    private Query mDatabase;
+    private FirebaseRecyclerAdapter<TicketData, SolvedTicketActivity.EntryViewHolder> firebaseRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_solved_ticket);
+        setContentView(R.layout.activity_report);
+
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        Toolbar toolbar = findViewById(R.id.toolbarMenu);
+        setSupportActionBar(toolbar);
+
+
+        //TODO: SET AN MENU TO SHEARCH THE REPORTS
+
+        //TODO:CHECK IF IT IS POSSIBLE TO FORCE AN ACTIVITY TO OPEN AT CERTAIN TIME
+        getReportList();
+        //get the ticket_technician.idTickets that are stated as solved then display them into a recyclerView
     }
 
     @Override
@@ -66,20 +73,22 @@ public class SolvedTicketActivity extends AppCompatActivity {
                 .setQuery(mDatabase, TicketData.class)
                 .build();
 
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, EntryViewHolder>(options) {
-            @NonNull
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, SolvedTicketActivity.EntryViewHolder>(options) {
             @Override
-            public EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View SolvedTicketview = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_solved_ticket, parent, false);
-                return new EntryViewHolder(SolvedTicketview);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
+            protected void onBindViewHolder(@NonNull SolvedTicketActivity.EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
                 entryViewHolder.setTitle("Ticket " + i);
                 entryViewHolder.setContent(ticketData.getContent());
             }
+
+            @NonNull
+            @Override
+            public SolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View ReportTicketview = LayoutInflater.from(parent.getContext()).
+                        inflate(R.layout.activity_unsolved_ticket, parent, false);
+                return new SolvedTicketActivity.EntryViewHolder(ReportTicketview);
+            }
         };
+
         recyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
@@ -90,52 +99,59 @@ public class SolvedTicketActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    public void getSolvedTickets() {
-        //TODO:MAKE THE QUERY INTERACTIVE,MEANING LET THE USER SHEARCH IN THE SOLVED TICKETS
+    private void getReportList() {
         DatabaseReference reference;
         //Reference for Ticket node
         reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
         reference.keepSynced(true);
 
+
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
-        //Reference for Technician_Ticket node
+
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
 
+            //select idTechnician from ticket_techenician where idTechinician = currentUserFromFirebase and requested_date = currentDate
             Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId)
-                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString()).limitToFirst(1);
+                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString());
 
             ticket_technicianID.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
+
+
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
+
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+            Query idTicket = reference.orderByChild("idTicket").equalTo(ticket_technician.getIdTicket().toString());
 
-            //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-            Query queryState =
-                    (Query) reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
-                            .orderByChild("state").equalTo(true);
-
-            queryState.addValueEventListener(new ValueEventListener() {
+            idTicket.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    dataSnapshot.getValue(Ticket.class);
+                    ticketList = new ArrayList<String>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        ticket = snapshot.getValue(Ticket.class);
+                        String ticketStateFromSnapshot = ticket.getState().toString();
+                        ticketList.add(ticketStateFromSnapshot);
+                    }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
             });
         } catch (Exception e) {
@@ -143,7 +159,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
         }
     }
 
-    public static class EntryViewHolder extends RecyclerView.ViewHolder {
+    public class EntryViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button ticket;
 
@@ -152,12 +168,12 @@ public class SolvedTicketActivity extends AppCompatActivity {
             mView = itemView;
         }
 
-        public void setTitle(String title){
+        public void setTitle(String title) {
             ticket = (Button) mView.findViewById(R.id.btnNewticket);
             ticket.setText(title);
         }
 
-        public void setContent(String content){
+        public void setContent(String content) {
             ticket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -167,9 +183,16 @@ public class SolvedTicketActivity extends AppCompatActivity {
         }
     }
 
-    public void showDetailsTIcket(){
+    public void sendReport() {
+        //TODO: MAKE THE PYTHON TO SEND THE REPORTS THAT ARE CHOOSEN
+
+    }
+
+    public void showDetailsTIcket() {
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("IDTicket",ticket.getIdTicket());
+        //PARSE THE CURRENT USER??
         startActivity(intent);
     }
 }
+
+
