@@ -24,7 +24,7 @@
     <string name="login">Login</string>
     <string name="title_activity_report">ReportActivity</string>
     <string name="title_activity_create_ticket">CreateTicketActivity</string>
-    <string name="Login">Login with Microsoft</string>
+    <string name="Login">Login</string>
     <string name="Welcome">Welcome,</string>
     <string name="sign_out">Sign Out</string>
     <string name="getting_graph_data">Getting Graph Data...</string>
@@ -43,4 +43,6 @@
     <string name="reports">Reports</string>
     <string name="button">Button</string>
     <string name="title_activity_report_post">ReportActivityPOST</string>
+    <string name="sign_in">Sign In</string>
+    <string name="register">Register</string>
 </resources>

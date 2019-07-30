@@ -58,7 +58,7 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                .setQuery(mDatabase, TicketData.class)
+                .setQuery(getUnsolvedTickets(), TicketData.class)
                 .build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder>(options) {
             @NonNull
@@ -85,7 +85,7 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    private void getUnsolvedTickets() {
+    private Query getUnsolvedTickets() {
         DatabaseReference reference;
         //Reference for Ticket node
         reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
@@ -110,13 +110,16 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        try {
+
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+        Query queryUnsolvedTickets = null;
+
+        try {
             //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-            Query queryState = (Query)
+            queryUnsolvedTickets = (Query)
                     reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
                             .orderByChild("state").equalTo(false);
-            queryState.addValueEventListener(new ValueEventListener() {
+            queryUnsolvedTickets.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     dataSnapshot.getValue(Ticket.class);
@@ -129,6 +132,7 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return queryUnsolvedTickets;
     }
 
     public class EntryViewHolder extends RecyclerView.ViewHolder {
