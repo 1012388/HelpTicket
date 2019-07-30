@@ -62,8 +62,9 @@ public class SolvedTicketActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                .setQuery(mDatabase, TicketData.class)
+                .setQuery(getSolvedTickets(), TicketData.class)
                 .build();
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, EntryViewHolder>(options) {
@@ -90,7 +91,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    public void getSolvedTickets() {
+    public Query getSolvedTickets() {
         //TODO:MAKE THE QUERY INTERACTIVE,MEANING LET THE USER SHEARCH IN THE SOLVED TICKETS
         DatabaseReference reference;
         //Reference for Ticket node
@@ -103,8 +104,9 @@ public class SolvedTicketActivity extends AppCompatActivity {
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
 
+            //select idTechinician from Ticket_technician where requested_date = current_Date
             Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId)
-                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString()).limitToFirst(1);
+                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString());
 
             ticket_technicianID.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -120,15 +122,16 @@ public class SolvedTicketActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        try {
-            reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
 
+        reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+        Query querySolvedTickets = null;
             //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-            Query queryState =
+        try {
+            querySolvedTickets =
                     (Query) reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
                             .orderByChild("state").equalTo(true);
 
-            queryState.addValueEventListener(new ValueEventListener() {
+            querySolvedTickets.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     dataSnapshot.getValue(Ticket.class);
@@ -141,9 +144,11 @@ public class SolvedTicketActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return querySolvedTickets;
     }
 
-    public static class EntryViewHolder extends RecyclerView.ViewHolder {
+    public class EntryViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button ticket;
 

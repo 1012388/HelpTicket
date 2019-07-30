@@ -62,33 +62,31 @@ public class ReportActivity extends AppCompatActivity {
         //TODO: SET AN MENU TO SHEARCH THE REPORTS
 
         //TODO:CHECK IF IT IS POSSIBLE TO FORCE AN ACTIVITY TO OPEN AT CERTAIN TIME
-        getReportList();
+
         //get the ticket_technician.idTickets that are stated as solved then display them into a recyclerView
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                .setQuery(mDatabase, TicketData.class)
-                .build();
+                .setQuery(getReportList(), TicketData.class).build();
 
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, SolvedTicketActivity.EntryViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull SolvedTicketActivity.EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
-                entryViewHolder.setTitle("Ticket " + i);
-                entryViewHolder.setContent(ticketData.getContent());
-            }
-
+        new FirebaseRecyclerAdapter<TicketData, EntryViewHolder>(options) {
             @NonNull
             @Override
-            public SolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View ReportTicketview = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.activity_unsolved_ticket, parent, false);
-                return new SolvedTicketActivity.EntryViewHolder(ReportTicketview);
+            public EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View ReportView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_report, parent, false);
+                return new EntryViewHolder(ReportView);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
+                entryViewHolder.setTitle("Ticket id:" + i);
+                entryViewHolder.setContent(ticketData.getContent());
             }
         };
-
         recyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
@@ -99,64 +97,61 @@ public class ReportActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    private void getReportList() {
+    private Query getReportList() {
         DatabaseReference reference;
         //Reference for Ticket node
         reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
         reference.keepSynced(true);
 
-
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
-
+        //Reference for Technician_Ticket node
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
 
-            //select idTechnician from ticket_techenician where idTechinician = currentUserFromFirebase and requested_date = currentDate
+            //select idTechinician from Ticket_technician where requested_date = current_Date
             Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId)
-                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString());
+                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString()).limitToFirst(1);
 
             ticket_technicianID.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
-
-
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
-
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        try {
-            reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
-            Query idTicket = reference.orderByChild("idTicket").equalTo(ticket_technician.getIdTicket().toString());
+        reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
+        Query querySolvedTickets = null;
 
-            idTicket.addValueEventListener(new ValueEventListener() {
+        //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
+        try {
+            querySolvedTickets =
+                    (Query) reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
+                            .orderByChild("state").equalTo(true);
+
+            querySolvedTickets.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ticketList = new ArrayList<String>();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        ticket = snapshot.getValue(Ticket.class);
-                        String ticketStateFromSnapshot = ticket.getState().toString();
-                        ticketList.add(ticketStateFromSnapshot);
-                    }
+                    dataSnapshot.getValue(Ticket.class);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return querySolvedTickets;
     }
 
     public class EntryViewHolder extends RecyclerView.ViewHolder {
