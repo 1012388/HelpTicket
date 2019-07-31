@@ -71,6 +71,7 @@ public class CreateTicketActivity extends AppCompatActivity {
         //Creating a path for Ticket
         instance.getReference("Ticket");
 
+        //TODO: FIX THE LAYOUT MISTAKE AND THE DATA FROM FIREBASE DOESNT SEEM TO APEAR . IS THE QUERY CORRECT????
         try {
             Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment").equalTo(equipName).limitToFirst(1);
 
