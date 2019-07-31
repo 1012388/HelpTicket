@@ -112,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(LoginActivity.this, "You are leaving the app", Toast.LENGTH_SHORT).show();
         finish();
     }
+    //todo:when the app is killed the user needs to log out
 
     public void LogInUser() {
         String email = editTextEmail.getText().toString().trim();
@@ -119,40 +120,37 @@ public class LoginActivity extends AppCompatActivity {
 
         //Verifications
         boolean valid = true;
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password)) {
             editTextEmail.setError("Haven't put any email");
-            valid = false;
-        } else {
-            editTextEmail.setError(null);
-        }
-
-        if (TextUtils.isEmpty(password)) {
             editTextPassword.setError("Haven't put any password");
             valid = false;
+            Task<AuthResult> authResultTask = firebaseAuth.signInWithEmailAndPassword(email, password);
+            authResultTask.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    try {
+                        if (task.isSuccessful()) {
+                            welcome.setText("Welcome: " + firebaseAuth.getCurrentUser().getDisplayName());
+                            //porque raio fecho? Ver o que faz
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(LoginActivity.this, "The login was failed", Toast.LENGTH_SHORT).show();
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } else {
+            editTextEmail.setError(null);
             editTextPassword.setError(null);
         }
 
-        Task<AuthResult> authResultTask = firebaseAuth.signInWithEmailAndPassword(email, password);
-        authResultTask.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                try {
-                    if (task.isSuccessful()) {
-                        welcome.setText("Welcome: " + firebaseAuth.getCurrentUser().getDisplayName());
-                        //porque raio fecho? Ver o que faz
-                        finish();
-                        Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(LoginActivity.this, "The login was failed", Toast.LENGTH_SHORT).show();
 
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+
     }
 
 

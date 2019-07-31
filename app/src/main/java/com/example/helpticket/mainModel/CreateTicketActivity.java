@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.helpticket.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,18 +48,23 @@ public class CreateTicketActivity extends AppCompatActivity {
     private String ticketId;
     private String empName;
     private String desc;
+    private FirebaseAuth firebaseAuth;
+    private String emails;
+    //public CreateTicketActivity() {
+    //}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_ticket);
-        findViewById(R.id.textViewNumTicket);
-        findViewById(R.id.spinnerLoc);
-        findViewById(R.id.spinnerEquip);
+
+        TextView textViewNumTicket = (TextView) findViewById(R.id.textViewNumTicket);
+        Spinner spinnerLoc = (Spinner) findViewById(R.id.spinnerLoc);
+        Spinner spinnerEquip = (Spinner) findViewById(R.id.spinnerEquip);
         EditText editTextDesc = (EditText) findViewById(R.id.editTextDesc);
         Spinner spinnerEmp = (Spinner) findViewById(R.id.spinnerEmp);
-        findViewById(R.id.textViewState1);
-        findViewById(R.id.textViewTech1);
+        TextView textViewState1 = (TextView) findViewById(R.id.textViewState1);
+        TextView textViewTech1 = (TextView) findViewById(R.id.textViewTech1);
         TextView textViewDate1 = (TextView) findViewById(R.id.textViewDate1);
         Button btnCreateTicket = (Button) findViewById(R.id.btnCreateTicket);
 
@@ -68,13 +74,23 @@ public class CreateTicketActivity extends AppCompatActivity {
 
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
+
+        //textViewNumTicket.setText("Ticket Number: "+idTicket+1);
+
+
         //Creating a path for Ticket
         instance.getReference("Ticket");
 
-        //TODO: FIX THE LAYOUT MISTAKE AND THE DATA FROM FIREBASE DOESNT SEEM TO APEAR . IS THE QUERY CORRECT????
-        try {
-            Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment").equalTo(equipName).limitToFirst(1);
+        //TODO: FIX THE LAYOUT MISTAKE
+        //Get the Locations
+        //select name from Locations
+        //select
+        instance.getReference("Locations").orderByChild("name");
+        //TODO: GIVE PERMISSIONS TO READ THE CURRENT USER TO READ THE DATABASE , HOW??
+        //get the Equipments
 
+        Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment");
+        try {
             queryidEquip.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -110,12 +126,12 @@ public class CreateTicketActivity extends AppCompatActivity {
         }
 
         try {
-            Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee").equalTo(empName).limitToFirst(1);
+            Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee").equalTo(empName);
 
             queryidEmp.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    employee = dataSnapshot.getValue(Employee.class);
+                    //employee = dataSnapshot.getValue(Employee.class);
                     final List<String> empName = new ArrayList<String>();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String empNameFromSnapshot = snapshot.getValue(String.class);
@@ -137,15 +153,71 @@ public class CreateTicketActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
+        //State
+//TODO: FINISH THIS ACTIVITY
+
+        textViewState1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int i = 0;
+                i = i++;
+                if (i % 2 == 0) {//State é False
+                    ticket.setState(false);
+                    textViewState1.setText("Not Solved");
+                } else {
+                    ticket.setState(true);
+                    textViewState1.setText("Solved");
+                }
+            }
+        });
+
+
+        //Tech
+        String CurrentTechnicianEmail = firebaseAuth.getCurrentUser().getEmail();
+        //Query à bd; Select email from Technician;
+        Query queryEmails = instance.getReference("Technician").orderByChild("email");
+
+        try {
+            queryEmails.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    //employee = dataSnapshot.getValue(Employee.class);
+                    final List<String> listEmails = new ArrayList<String>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        emails = snapshot.getValue(String.class);
+                        listEmails.add(emails);
+                    }
+                    if (listEmails.contains(CurrentTechnicianEmail)) {
+                        textViewTech1.setText(firebaseAuth.getCurrentUser().getDisplayName());
+                    }
+                    Log.d(TAG, "Technician's Email " + employee.getIdEmployee());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         btnCreateTicket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 desc = editTextDesc.getText().toString();
-                CreateTicket(currentTime, desc, false, equipment.getIdEquipment(), employee.getIdEmployee());
+                CreateTicket(currentTime, desc, ticket.getState(), equipment.getIdEquipment(), employee.getIdEmployee());
                 Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
+
+
+
+
+
     }
 
     public void CreateTicket(Date requested_date, String description, Boolean state, int idEquipment, int idEmployee) {
