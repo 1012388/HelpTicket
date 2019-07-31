@@ -45,4 +45,5 @@
     <string name="title_activity_report_post">ReportActivityPOST</string>
     <string name="sign_in">Sign In</string>
     <string name="register">Register</string>
+    <string name="Forgot_Pass">Did you forgot your passoword?</string>
 </resources>

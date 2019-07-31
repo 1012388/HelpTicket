@@ -1,5 +1,4 @@
 package com.example.helpticket.ui.login;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,13 +19,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
+    public static final String PACKAGE_NAME = "com.example.helpticket.ui.login";
+    public static final String LINK = "https://helpticket.page.link/";
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private MenuActivity menuActivity;
@@ -37,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     Button RegisterButton;
     TextView welcome;
     Button LogOutButton;
+    Button ForgotButton;
 
 
 
@@ -51,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         RegisterButton = (Button) findViewById(R.id.RegisterButton);
         welcome = (TextView) findViewById(R.id.welcome);
         LogOutButton = (Button) findViewById(R.id.LogOutButton);
+        ForgotButton = (Button) findViewById(R.id.ForgotButton);
 
 
         // Initialize Firebase Auth
@@ -91,15 +98,22 @@ public class LoginActivity extends AppCompatActivity {
                 LogOutUser();
             }
         });
+
+        ForgotButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RecoverPass(editTextEmail.getText().toString());
+            }
+        });
     }
 
-    private void LogOutUser() {
+    public void LogOutUser() {
         firebaseAuth.signOut();
         Toast.makeText(LoginActivity.this, "You are leaving the app", Toast.LENGTH_SHORT).show();
         finish();
     }
 
-    private void LogInUser() {
+    public void LogInUser() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextEmail.getText().toString().trim();
 
@@ -139,10 +153,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
-    private void RegisterUser() {
+
+    public void RegisterUser() {
         //Register User
         //Get email and password
         String email = editTextEmail.getText().toString().trim();
@@ -180,14 +194,84 @@ public class LoginActivity extends AppCompatActivity {
                                 //porque raio fecho? Ver o que faz
 
                                 finish();
-                                Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
-                                startActivity(intent);
-                                updateUI(null);
                             } else {
                                 Toast.makeText(LoginActivity.this, "The registration failed", Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    //Create an user then send a validation email
+    public void EmailVerification() {
+        //get current_user from FirebaseAuth
+        FirebaseUser currentUser = firebaseAuth.getInstance().getCurrentUser();
+        ActionCodeSettings.Builder actionCodeSettings = ActionCodeSettings.newBuilder()
+                .setUrl(LINK).setAndroidPackageName(PACKAGE_NAME, false, null);
+
+        currentUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //Sucesso e volta à app
+                    Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+                    startActivity(intent);
+                    updateUI(null);
+                }
+            }
+        });
+    }
+
+
+    //Manage users
+    //Reauthenticate
+    public void reauthenticate(String email, String password) {
+        // [START reauthenticate]
+        //Set the old user to be the new user
+        FirebaseUser user = firebaseAuth.getInstance().getCurrentUser();
+
+        // Get auth credentials from the user for re-authentication.
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(email, password);
+
+        // Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d(TAG, "User re-authenticated.");
+                    }
+                });
+        // [END reauthenticate]
+    }
+
+    //Send an email to provide another password
+
+    public void RecoverPass(String email) {
+        firebaseAuth.getInstance().sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                        }
+                    }
+                });
+    }
+
+
+    //Delete
+    public void deleteUser() {
+        FirebaseUser currentUser = firebaseAuth.getInstance().getCurrentUser();
+
+        currentUser.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "The current user was deleted sucessefully");
                         }
                     }
                 });
@@ -217,7 +301,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void updateUI(FirebaseUser currentUser) {
+    public void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
             //PUT USERNAME IN THE TET VIEW
             editTextEmail.setVisibility(View.VISIBLE);
