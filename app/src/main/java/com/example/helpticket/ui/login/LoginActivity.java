@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
     Button ForgotButton;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +64,13 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {//Significa que há um user ligado, Se está na login activity então é porque quer se desligar
+
+            //todo:Testar isto, já deve dar bem
             welcome.setText("Hi, " + currentUser.getDisplayName());
+            editTextEmail.setVisibility(View.VISIBLE);
+            editTextPassword.setVisibility(View.VISIBLE);
             LogOutButton.setVisibility(View.VISIBLE);
+            LogOutUser();
         } else {//Não há ninguém logado
             welcome.setText("Hello, please Register or Log in");
             editTextEmail.setVisibility(View.INVISIBLE);
@@ -74,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
             LogOutButton.setVisibility(View.INVISIBLE);
         }
 
-        //TODO: DELETE USER,RECOVER
 
         RegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,12 +108,13 @@ public class LoginActivity extends AppCompatActivity {
                 RecoverPass(editTextEmail.getText().toString());
             }
         });
+
     }
 
     public void LogOutUser() {
         firebaseAuth.signOut();
         Toast.makeText(LoginActivity.this, "You are leaving the app", Toast.LENGTH_SHORT).show();
-        finish();
+        //finish();
     }
     //todo:when the app is killed the user needs to log out
 
@@ -124,7 +128,8 @@ public class LoginActivity extends AppCompatActivity {
             editTextEmail.setError("Haven't put any email");
             editTextPassword.setError("Haven't put any password");
             valid = false;
-            Task<AuthResult> authResultTask = firebaseAuth.signInWithEmailAndPassword(email, password);
+        }
+        Task<AuthResult> authResultTask = firebaseAuth.signInWithEmailAndPassword(email, password);
             authResultTask.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -144,14 +149,11 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
-        } else {
+
             editTextEmail.setError(null);
             editTextPassword.setError(null);
-        }
-
-
-
     }
+
 
 
     public void RegisterUser() {
@@ -307,7 +309,7 @@ public class LoginActivity extends AppCompatActivity {
 
             LogInButton.setVisibility(View.VISIBLE);
             RegisterButton.setVisibility(View.INVISIBLE);
-            LogOutButton.setVisibility(View.GONE);
+            LogOutButton.setVisibility(View.VISIBLE);
 
         } else {//Se o user não esta ligado significa que está a tentar ligá-lo
 
