@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -85,24 +86,51 @@ public class CreateTicketActivity extends AppCompatActivity {
         //Get the Locations
         //select name from Locations
         //select
-        instance.getReference("Locations").orderByChild("name");
-        //TODO: GIVE PERMISSIONS TO READ THE CURRENT USER TO READ THE DATABASE , HOW??
+        Query queryLocs = instance.getReference("Locations").orderByChild("name");
+        try {
+            queryLocs.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    final List<String> locList = new ArrayList<String>();
+
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                        String locNameFromSnapshot = snapshot.child("name").getValue(String.class);
+
+                        locList.add(locNameFromSnapshot);
+                    }
+                    Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, locList);
+                    arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                    spinnerLoc.setAdapter(arrayAdapter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         //get the Equipments
 
         Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment");
         try {
-            queryidEquip.addListenerForSingleValueEvent(new ValueEventListener() {
+            queryidEquip.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     equipment = dataSnapshot.getValue(Equipment.class);
-                    Log.d(TAG, "Equipment id is " + equipment.getIdEquipment());
+
 
                     final List<String> equipName = new ArrayList<String>();
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String equipNameFromSnapshot = snapshot.getValue(String.class);
+                        String equipNameFromSnapshot = snapshot.child("name").getValue(String.class);
 
                         equipName.add(equipNameFromSnapshot);
                     }
@@ -110,9 +138,7 @@ public class CreateTicketActivity extends AppCompatActivity {
 
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, equipName);
                     arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                    spinnerEmp.setAdapter(arrayAdapter);
-
-
+                    spinnerEquip.setAdapter(arrayAdapter);
                 }
 
                 @Override
@@ -126,12 +152,12 @@ public class CreateTicketActivity extends AppCompatActivity {
         }
 
         try {
-            Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee").equalTo(empName);
+            Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee");
 
-            queryidEmp.addListenerForSingleValueEvent(new ValueEventListener() {
+            queryidEmp.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    //employee = dataSnapshot.getValue(Employee.class);
+                    employee = dataSnapshot.getValue(Employee.class);
                     final List<String> empName = new ArrayList<String>();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String empNameFromSnapshot = snapshot.getValue(String.class);
@@ -155,8 +181,6 @@ public class CreateTicketActivity extends AppCompatActivity {
 
 
         //State
-//TODO: FINISH THIS ACTIVITY
-
         textViewState1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,11 +237,6 @@ public class CreateTicketActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-
-
-
-
     }
 
     public void CreateTicket(Date requested_date, String description, Boolean state, int idEquipment, int idEmployee) {
@@ -231,8 +250,6 @@ public class CreateTicketActivity extends AppCompatActivity {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/ticket/" + ticketId, postValues);
         mDatabase.updateChildren(childUpdates);
-
-        //TODO:Populate the ticket_technician class
         //Assign the current user to the ticket
     }
 
