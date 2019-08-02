@@ -73,8 +73,8 @@ public class LoginActivity extends AppCompatActivity {
             LogOutUser();
         } else {//Não há ninguém logado
             welcome.setText("Hello, please Register or Log in");
-            editTextEmail.setVisibility(View.INVISIBLE);
-            editTextPassword.setVisibility(View.INVISIBLE);
+            editTextEmail.setVisibility(View.VISIBLE);
+            editTextPassword.setVisibility(View.VISIBLE);
             LogOutButton.setVisibility(View.INVISIBLE);
         }
 

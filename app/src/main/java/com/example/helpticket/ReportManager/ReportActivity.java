@@ -3,6 +3,9 @@ package com.example.helpticket.ReportManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -56,15 +59,41 @@ public class ReportActivity extends AppCompatActivity {
 
 
         Toolbar toolbar = findViewById(R.id.toolbarMenu);
-        setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.main_menu);
+        setContentView(toolbar);
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 
-        //TODO: SET AN MENU TO SHEARCH THE REPORTS
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                if (item.getItemId() == R.id.action_add) {
+                    // do something
+                } else if (item.getItemId() == R.id.action_settings) {
+                    // do something
+                } else {
+                    // do something
+                }
+
+                return false;
+            }
+        });
+
 
         //TODO:CHECK IF IT IS POSSIBLE TO FORCE AN ACTIVITY TO OPEN AT CERTAIN TIME
 
+
         //get the ticket_technician.idTickets that are stated as solved then display them into a recyclerView
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+
 
     @Override
     protected void onStart() {

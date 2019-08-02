@@ -76,16 +76,13 @@ public class DetailsActivity extends AppCompatActivity {
         TextView textViewDate = (TextView) findViewById(R.id.textViewDate);
 
         Intent intent = getIntent();
-        //TODO:Usar o idTicket que veio da atividade para comparar com o que vem do firebase
-        int idTicket = intent.getIntExtra("IDTicket", 0);
 
+        int idTicket = intent.getIntExtra("IDTicket", 0);
 
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
         DatabaseReference ref = instance.getReference("Ticket_Technician");
         try {
-
-
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -103,8 +100,6 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         DatabaseReference ticketRef = instance.getReference("Ticket");
-
-
         try {
             ticketRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -120,20 +115,17 @@ public class DetailsActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            }
+        }
 
         DatabaseReference equipmentRef = instance.getReference("Equipment");
-
         try {
             equipmentRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     equipment = dataSnapshot.getValue(Equipment.class);
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
 
@@ -189,7 +181,6 @@ public class DetailsActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     LocationsName = (String) dataSnapshot.child("name").getValue();
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
@@ -206,7 +197,8 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         try {
-            reference = FirebaseDatabase.getInstance().getReference("Ticket").orderByChild("idTicket").equalTo(ticket.getIdTicket());
+            reference = FirebaseDatabase.getInstance().getReference("Ticket")
+                    .orderByChild("idTicket").equalTo(ticket.getIdTicket());
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -217,7 +209,6 @@ public class DetailsActivity extends AppCompatActivity {
                         ticketState.add(ticketStateFromSnapshot);
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -231,16 +222,14 @@ public class DetailsActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerDetailsState.setAdapter(adapter);
         spinnerDetailsState.setClickable(true);
-
         currentFirebaseUser = FirebaseAuth.getInstance()
                 .getCurrentUser();
-
         user_id_will_be = currentFirebaseUser.getUid();
         DatabaseReference updateData = FirebaseDatabase.getInstance()
                 .getReference("Ticket")
                 .child(user_id_will_be);
-
         String newState = spinnerDetailsState.getSelectedItem().toString();
+
         try {//Update the ticket witht the new state
             updateData.child("State").setValue(newState);
         } catch (Exception e) {
@@ -251,8 +240,8 @@ public class DetailsActivity extends AppCompatActivity {
         editTextDesc1.setText("Description :" + ticket.getDescription());
         currentFirebaseUser = FirebaseAuth.getInstance()
                 .getCurrentUser();
-
         user_id_will_be = currentFirebaseUser.getUid();
+
         try {
             DatabaseReference updatedData = FirebaseDatabase.getInstance()
                     .getReference("Ticket")
@@ -283,7 +272,9 @@ public class DetailsActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-        reference = (Query) FirebaseDatabase.getInstance().getReference("Technician").orderByChild("idTechnician").equalTo(idTechnicianFromTicket);
+
+        reference = (Query) FirebaseDatabase.getInstance().getReference("Technician")
+                .orderByChild("idTechnician").equalTo(idTechnicianFromTicket);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -296,8 +287,8 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         textViewTech.setText("Technician Name: " + technicianName);
-
-        reference = FirebaseDatabase.getInstance().getReference("Employee").orderByChild("idEmployee").equalTo(idEmpFromTicket);
+        reference = FirebaseDatabase.getInstance().getReference("Employee")
+                .orderByChild("idEmployee").equalTo(idEmpFromTicket);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

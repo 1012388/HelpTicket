@@ -81,6 +81,5 @@ public class MenuActivity extends Activity {
         Intent intent = new Intent(this, CreateTicketActivity.class);
         startActivity(intent);
     }
-    //TODO:Report,it was to show all requests from a techenician on that day. So the user can see old reports.
 }
 
