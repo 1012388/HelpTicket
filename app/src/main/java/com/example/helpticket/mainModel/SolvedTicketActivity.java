@@ -1,13 +1,19 @@
 package com.example.helpticket.mainModel;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,15 +54,65 @@ public class SolvedTicketActivity extends AppCompatActivity {
     private Calendar currentDate;
     private FirebaseRecyclerAdapter<TicketData, EntryViewHolder> firebaseRecyclerAdapter;
     private List<EntryViewHolder> ticketList;
+    private String parameter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_solved_ticket);
+        Toolbar toolbarSolved = (Toolbar) findViewById(R.id.toolbarSolved);
+
+        toolbarSolved.inflateMenu(R.menu.main_menu);
+        setContentView(toolbarSolved);
+
+        toolbarSolved.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                if (item.getItemId() == R.id.action_shearch) {
+
+                    inputShearchParameters();
+                }
+
+                return true;
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private String inputShearchParameters() {
+        //TODO:TESTAR A VER SE DÁ
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Shearch");
+        builder.setMessage("Please input your shearch paramaters");
+        EditText input = new EditText(this);
+        builder.setView(input);
+        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    parameter = input.getText().toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                Toast.makeText(getApplicationContext(), "You have canceled the input", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        return parameter;
     }
 
     @Override
