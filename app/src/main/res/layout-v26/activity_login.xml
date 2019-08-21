@@ -14,15 +14,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="260dp"
         android:layout_marginEnd="8dp"
+        android:autofillHints=""
         android:ems="10"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.45"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcome"
-        tools:text="@string/prompt_email"
-        android:autofillHints="" />
+        tools:text="@string/prompt_email" />
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -87,8 +88,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="328dp"
+        android:layout_width="408dp"
+        android:layout_height="105dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"

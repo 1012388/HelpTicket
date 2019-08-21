@@ -7,8 +7,8 @@ package com.example.helpticket.databaseModels;
 public class Employee {
     //fields
     private int idEmployee;
-    private Locations idLocation;
-    private Equipment idEquipment;
+
+
     private String name;
     private String email;
 
@@ -20,10 +20,9 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(int idEmployee, Locations idLocation, Equipment idEquipment, String name, String email) {
+    public Employee(int idEmployee, String name, String email) {
         this.idEmployee = idEmployee;
-        this.idLocation = idLocation;
-        this.idEquipment = idEquipment;
+
         this.name = name;
         this.email = email;
     }
@@ -39,21 +38,6 @@ public class Employee {
         this.idEmployee = idEmployee;
     }
 
-    public Locations getIdLocation() {
-        return idLocation;
-    }
-
-    public void setIdLocation(Locations idLocation) {
-        this.idLocation = idLocation;
-    }
-
-    public Equipment getIdEquipment() {
-        return idEquipment;
-    }
-
-    public void setIdEquipment(Equipment idEquipment) {
-        this.idEquipment = idEquipment;
-    }
 
     public String getName() {
         return name;

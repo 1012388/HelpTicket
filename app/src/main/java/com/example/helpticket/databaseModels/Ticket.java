@@ -20,7 +20,8 @@ public class Ticket {
     private boolean state;//serve para o técnico ter a opção 0 não;1 sim
 
     //constructor
-
+    public Ticket() {
+    }
 
     public Ticket(int idEquipment, Date requested_date, int idEmployee, String description, Boolean state){
 
