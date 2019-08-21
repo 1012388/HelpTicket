@@ -6,6 +6,7 @@ public class Shift {
     private int idShift;
     private Date start_shift;
     private Date end_shift;
+    private String name;
 
     //construtor
 
@@ -13,10 +14,11 @@ public class Shift {
     public Shift() {
     }
 
-    public Shift(int idShift, Date start_shift,Date end_shift) {
+    public Shift(int idShift, Date start_shift, Date end_shift, String name) {
         this.idShift = idShift;
         this.start_shift = start_shift;
         this.end_shift = end_shift;
+        this.name = name;
     }
 
 
@@ -47,5 +49,11 @@ public class Shift {
         this.end_shift = end_shift;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -3,7 +3,7 @@ package com.example.helpticket.databaseModels;
 import java.util.Date;
 
 public class Ticket_Technician {
-    private Ticket_Technician idTicket_technician;
+    private int idTicket_technician;
     private Ticket idTicket;
     private Technician idTechnician;
     private Date duration;
@@ -14,7 +14,7 @@ public class Ticket_Technician {
     public Ticket_Technician() {
     }
 
-    public Ticket_Technician(Ticket_Technician idTicket_technician, Ticket idTicket, Technician idTechnician, Date duration) {
+    public Ticket_Technician(int idTicket_technician, Ticket idTicket, Technician idTechnician, Date duration) {
         this.idTicket_technician = idTicket_technician;
         this.idTicket = idTicket;
         this.idTechnician = idTechnician;
@@ -26,11 +26,11 @@ public class Ticket_Technician {
     //gets and sets
 
 
-    public Ticket_Technician getIdTicket_technician() {
+    public int getIdTicket_technician() {
         return idTicket_technician;
     }
 
-    public void setIdTicket_technician(Ticket_Technician idTicket_technician) {
+    public void setIdTicket_technician(int idTicket_technician) {
         this.idTicket_technician = idTicket_technician;
     }
 

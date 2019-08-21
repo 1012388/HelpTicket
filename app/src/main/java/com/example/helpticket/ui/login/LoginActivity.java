@@ -192,7 +192,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(LoginActivity.this, "The registration was succeseful", Toast.LENGTH_SHORT).show();
                                 //porque raio fecho? Ver o que faz
-
+                                EmailVerification();
                                 finish();
                             } else {
                                 Toast.makeText(LoginActivity.this, "The registration failed", Toast.LENGTH_SHORT).show();
