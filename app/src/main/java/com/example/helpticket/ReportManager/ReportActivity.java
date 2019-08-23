@@ -1,5 +1,7 @@
 package com.example.helpticket.ReportManager;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.helpticket.databaseModels.Ticket;
 import com.example.helpticket.databaseModels.Ticket_Technician;
@@ -22,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.helpticket.R;
 import com.example.helpticket.mainModel.DetailsActivity;
 import com.example.helpticket.mainModel.SolvedTicketActivity;
-import com.example.helpticket.mainModel.TicketData;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,45 +44,22 @@ public class ReportActivity extends AppCompatActivity {
     private Calendar currentDate;
     private Ticket_Technician ticket_technician;
     private List<String> ticketList;
-    private Ticket ticket;
+    private com.example.helpticket.databaseModels.Ticket ticket;
     private Query mDatabase;
-    private FirebaseRecyclerAdapter<TicketData, SolvedTicketActivity.EntryViewHolder> firebaseRecyclerAdapter;
-
+    private FirebaseRecyclerAdapter<Ticket, SolvedTicketActivity.EntryViewHolder> firebaseRecyclerAdapter;
+    private String title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-        Toolbar toolbar = findViewById(R.id.toolbarMenu);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMenu);
         toolbar.inflateMenu(R.menu.main_menu);
         setContentView(toolbar);
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                if (item.getItemId() == R.id.action_add) {
-                    // do something
-                } else if (item.getItemId() == R.id.action_settings) {
-                    // do something
-                } else {
-                    // do something
-                }
-
-                return false;
-            }
-        });
-
-
-        //TODO:CHECK IF IT IS POSSIBLE TO FORCE AN ACTIVITY TO OPEN AT CERTAIN TIME
-
 
         //get the ticket_technician.idTickets that are stated as solved then display them into a recyclerView
     }
@@ -93,32 +71,154 @@ public class ReportActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
+        switch (id) {
+            case R.id.action_idTicket:
+                showInputDialog(id);
+                return true;
+            case R.id.action_idEquipment:
+                showInputDialog(id);
+                return true;
+            case R.id.action_RequestedDate:
+                showInputDialog(id);
+                return true;
+            case R.id.action_idEmployee:
+                showInputDialog(id);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+
+    }
+
+    private void showInputDialog(int id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        final View view = layoutInflater.inflate(R.layout.input_dialog, null);
+        builder.setView(view);
+
+
+        final EditText editText = (EditText) view.findViewById(R.id.editTextInput);
+        switch (id) {
+            case R.id.action_idTicket:
+                title = "Shearch by Ticket id:";
+
+            case R.id.action_idEquipment:
+                title = "Shearch by Equipment:";
+
+            case R.id.action_RequestedDate:
+                title = "Shearch by Date:";
+
+            case R.id.action_idEmployee:
+                title = "Shearch by Employee:";
+
+            default:
+                title = "Shearch by Ticket id:";
+        }
+
+        builder.setTitle(title);
+        builder.setMessage("Enter shearch parameter below");
+        builder.setPositiveButton("Shearch", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                shearchReport(editText.getText().toString());
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //go back ? how to, probably nothing ?
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+    }
+
+    /*private void FirebaseSearch() {
+        FirebaseRecyclerOptions<Ticket> options = new FirebaseRecyclerOptions.Builder<Ticket>()
+                .setQuery(getReportList(), Ticket.class).build();
+
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Ticket, SolvedTicketActivity.EntryViewHolder>(options) {
+            @NonNull
+            @Override
+            public SolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View ReportView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_report, parent, false);
+                return new SolvedTicketActivity.EntryViewHolder(ReportView);
+            }
+            @Override
+            protected void onBindViewHolder(@NonNull SolvedTicketActivity.EntryViewHolder entryViewHolder, int i, @NonNull Ticket ticket) {
+                entryViewHolder.setTitle("TicketHolder id:" + i);
+                //entryViewHolder.setContent(ticket.getContent());
+            }
+        };
+        recyclerView.setAdapter(this.firebaseRecyclerAdapter);
+        this.firebaseRecyclerAdapter.startListening();
+    }*/
+
+    private String shearchReport(String shearchParam) {
+        //Procura linear
+        String reportName;
+
+        Query reportList = getReportList(shearchParam);
+
+        reportList.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                com.example.helpticket.databaseModels.Ticket ticket = dataSnapshot.getValue(com.example.helpticket.databaseModels.Ticket.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ReportActivity.this, "The read operation has failed : " + databaseError.getCode(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        if (String.valueOf(ticket.getIdTicket()) == shearchParam) {
+            reportName = shearchParam;
+            //only populate the reports that have the shearch Param
+        } else {
+            reportName = null;
+        }
+
+        return reportName;
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
+        //when the recycler View is first loaded the view is loaded with the default parameter,
+        String param = "idTicket";
+        FirebaseRecyclerOptions<Ticket> options = new FirebaseRecyclerOptions.Builder<Ticket>()
+                .setQuery(getReportList(param), Ticket.class).build();
 
-        FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                .setQuery(getReportList(), TicketData.class).build();
-
-        new FirebaseRecyclerAdapter<TicketData, EntryViewHolder>(options) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Ticket, SolvedTicketActivity.EntryViewHolder>(options) {
             @NonNull
             @Override
-            public EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public SolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View ReportView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_report, parent, false);
-                return new EntryViewHolder(ReportView);
+                return new SolvedTicketActivity.EntryViewHolder(ReportView);
             }
-
             @Override
-            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
+            protected void onBindViewHolder(@NonNull SolvedTicketActivity.EntryViewHolder entryViewHolder, int i, @NonNull Ticket ticket) {
                 entryViewHolder.setTitle("Ticket id:" + i);
-                entryViewHolder.setContent(ticketData.getContent());
+                entryViewHolder.setIsRecyclable(true);
+                //entryViewHolder.setContent(ticket.getContent());
             }
         };
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+        recyclerView.setAdapter(this.firebaseRecyclerAdapter);
+        this.firebaseRecyclerAdapter.startListening();
+
         firebaseRecyclerAdapter.startListening();
     }
+
 
     @Override
     protected void onStop() {
@@ -126,19 +226,20 @@ public class ReportActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    private Query getReportList() {
-        DatabaseReference reference;
-        //Reference for Ticket node
-        reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
-        reference.keepSynced(true);
+    private Query getReportList(String param) {
+        //TODO: make the query responsive,meaning that the query will change if the param is different
 
+
+        DatabaseReference reference;
+        //Reference for TicketHolder node
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
         //Reference for Technician_Ticket node
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
+            reference.keepSynced(true);
 
-            //select idTechinician from Ticket_technician where requested_date = current_Date
+            //Query : select idTechinician from Ticket_technician where requested_date = current_Date
             Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId)
                     .orderByChild("requested_date").equalTo(currentDate.getTime().toString()).limitToFirst(1);
 
@@ -161,55 +262,12 @@ public class ReportActivity extends AppCompatActivity {
         Query querySolvedTickets = null;
 
         //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-        try {
-            querySolvedTickets =
-                    (Query) reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
+        querySolvedTickets = (Query) reference.orderByChild(param).equalTo((ticket_technician.getIdTicket().toString()))
                             .orderByChild("state").equalTo(true);
 
-            querySolvedTickets.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    dataSnapshot.getValue(Ticket.class);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        reference.keepSynced(true);
 
         return querySolvedTickets;
-    }
-
-    public class EntryViewHolder extends RecyclerView.ViewHolder {
-        View mView;
-        Button ticket;
-
-        public EntryViewHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-        }
-
-        public void setTitle(String title) {
-            ticket = (Button) mView.findViewById(R.id.btnNewticket);
-            ticket.setText(title);
-        }
-
-        public void setContent(String content) {
-            ticket.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showDetailsTIcket();
-                }
-            });
-        }
-    }
-
-    public void sendReport() {
-        //TODO: MAKE THE PYTHON TO SEND THE REPORTS THAT ARE CHOOSEN
-
     }
 
     public void showDetailsTIcket() {
