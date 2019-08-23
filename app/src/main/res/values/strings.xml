@@ -46,4 +46,9 @@
     <string name="sign_in">Sign In</string>
     <string name="register">Register</string>
     <string name="Forgot_Pass">Did you forgot your passoword?</string>
+    <string name="by_ticket_number">by Ticket number</string>
+    <string name="by_equipment">by Equipment</string>
+    <string name="by_employee_s_name">by Employee\'s name</string>
+    <string name="by_requested_date">by Requested Date</string>
+    <string name="by_state">by State</string>
 </resources>

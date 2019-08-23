@@ -2,10 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_shearch"
-        app:showAsAction="never"
-        android:title="Settings">
+        android:id="@+id/action_idTicket"
+        android:title="@string/by_ticket_number">
 
     </item>
+    <item
+        android:id="@+id/action_idEquipment"
+        android:title="@string/by_equipment">
+
+    </item>
+    <item
+        android:id="@+id/action_idEmployee"
+        android:title="@string/by_employee_s_name">
+
+    </item>
+    <item
+        android:id="@+id/action_RequestedDate"
+        android:title="@string/by_requested_date">
+
+    </item>
+
 
 </menu>
