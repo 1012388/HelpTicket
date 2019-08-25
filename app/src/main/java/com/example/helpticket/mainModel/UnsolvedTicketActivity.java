@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +35,11 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseReference mDatabase;
-    private Ticket ticket;
+    private com.example.helpticket.databaseModels.Ticket ticket;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private Ticket_Technician ticket_technician;
-    private FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder> firebaseRecyclerAdapter;
+    private FirebaseRecyclerAdapter<Ticket, EntryViewHolder> firebaseRecyclerAdapter;
     private List<SolvedTicketActivity.EntryViewHolder> ticketList;
 
     @Override
@@ -57,10 +56,10 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                .setQuery(getUnsolvedTickets(), TicketData.class)
+        FirebaseRecyclerOptions<Ticket> options = new FirebaseRecyclerOptions.Builder<Ticket>()
+                .setQuery(getUnsolvedTickets(), Ticket.class)
                 .build();
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, UnsolvedTicketActivity.EntryViewHolder>(options) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Ticket, UnsolvedTicketActivity.EntryViewHolder>(options) {
             @NonNull
             @Override
             public UnsolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,9 +69,9 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
+            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull Ticket ticket) {
                 entryViewHolder.setTitle("Ticket " + i);
-                entryViewHolder.setContent(ticketData.getContent());
+
             }
         };
         recyclerView.setAdapter(firebaseRecyclerAdapter);
@@ -122,7 +121,7 @@ public class UnsolvedTicketActivity extends AppCompatActivity {
             queryUnsolvedTickets.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    dataSnapshot.getValue(Ticket.class);
+                    dataSnapshot.getValue(com.example.helpticket.databaseModels.Ticket.class);
                 }
 
                 @Override

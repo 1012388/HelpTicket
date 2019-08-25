@@ -1,12 +1,9 @@
 package com.example.helpticket.mainModel;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,14 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.helpticket.R;
-import com.example.helpticket.databaseModels.Equipment;
 import com.example.helpticket.databaseModels.Ticket;
 import com.example.helpticket.databaseModels.Ticket_Technician;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,12 +42,12 @@ public class SolvedTicketActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseReference mDatabase;
-    private Ticket ticket;
+    private com.example.helpticket.databaseModels.Ticket ticket;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private Ticket_Technician ticket_technician;
     private Calendar currentDate;
-    private FirebaseRecyclerAdapter<TicketData, EntryViewHolder> firebaseRecyclerAdapter;
+    private FirebaseRecyclerAdapter<Ticket, EntryViewHolder> firebaseRecyclerAdapter;
     private List<EntryViewHolder> ticketList;
     private String parameter;
 
@@ -70,7 +65,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                if (item.getItemId() == R.id.action_shearch) {
+                if (item.getItemId() == R.id.action_idTicket) {
 
                     inputShearchParameters();
                 }
@@ -119,11 +114,12 @@ public class SolvedTicketActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        FirebaseRecyclerOptions<TicketData> options = new FirebaseRecyclerOptions.Builder<TicketData>()
-                .setQuery(getSolvedTickets(), TicketData.class)
+        FirebaseRecyclerOptions<Ticket> options = new FirebaseRecyclerOptions.Builder<Ticket>()
+                .setQuery(getSolvedTickets(), Ticket.class)
                 .build();
 
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TicketData, EntryViewHolder>(options) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Ticket, EntryViewHolder>(options) {
+
             @NonNull
             @Override
             public EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -132,10 +128,10 @@ public class SolvedTicketActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull TicketData ticketData) {
+            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull Ticket ticket) {
                 entryViewHolder.setTitle("Ticket " + i);
-                entryViewHolder.setContent(ticketData.getContent());
             }
+
         };
         recyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
@@ -190,7 +186,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
             querySolvedTickets.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    dataSnapshot.getValue(Ticket.class);
+                    dataSnapshot.getValue(com.example.helpticket.databaseModels.Ticket.class);
                 }
 
                 @Override
@@ -204,7 +200,7 @@ public class SolvedTicketActivity extends AppCompatActivity {
         return querySolvedTickets;
     }
 
-    public class EntryViewHolder extends RecyclerView.ViewHolder {
+    public static class EntryViewHolder extends RecyclerView.ViewHolder {
         View mView;
         Button ticket;
 
@@ -222,15 +218,18 @@ public class SolvedTicketActivity extends AppCompatActivity {
             ticket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showDetailsTIcket();
+                    // showDetailsTIcket();
                 }
             });
         }
-    }
 
+
+    }
     public void showDetailsTIcket(){
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra("IDTicket",ticket.getIdTicket());
         startActivity(intent);
     }
+
+
 }
