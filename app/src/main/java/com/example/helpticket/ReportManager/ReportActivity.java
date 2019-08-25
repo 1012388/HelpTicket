@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.example.helpticket.R;
 import com.example.helpticket.mainModel.DetailsActivity;
 import com.example.helpticket.mainModel.SolvedTicketActivity;

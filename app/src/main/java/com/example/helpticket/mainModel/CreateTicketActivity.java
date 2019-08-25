@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.example.helpticket.databaseModels.Employee;
 import com.example.helpticket.databaseModels.Equipment;
+import com.example.helpticket.databaseModels.Locations;
 import com.example.helpticket.databaseModels.Ticket;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -13,16 +14,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.helpticket.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,13 +51,13 @@ public class CreateTicketActivity extends AppCompatActivity {
     private Employee employee;
     private DatabaseReference mDatabase;
     private Ticket ticket;
+    private Locations locations;
     private String ticketId;
     private String empName;
     private String desc;
     private FirebaseAuth firebaseAuth;
     private String emails;
-    //public CreateTicketActivity() {
-    //}
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,20 +78,23 @@ public class CreateTicketActivity extends AppCompatActivity {
         currentTime = Calendar.getInstance().getTime();
         textViewDate1.setText(currentTime.toString());
 
+
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
 
 
-        //textViewNumTicket.setText("Ticket Number: "+idTicket+1);
+        //textViewNumTicket.setText("TicketHolder Number: "+idTicket+1);
 
 
-        //Creating a path for Ticket
-        instance.getReference("Ticket");
+        //Creating a path for TicketHolder
 
         //TODO: FIX THE LAYOUT MISTAKE
         //Get the Locations
         //select name from Locations
         //select
-        Query queryLocs = instance.getReference("Locations").orderByChild("name");
+
+        locations = new Locations();
+
+        Query queryLocs = instance.getReference().child("Locations").orderByChild("name");
         try {
             queryLocs.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -99,34 +107,42 @@ public class CreateTicketActivity extends AppCompatActivity {
 
                         locList.add(locNameFromSnapshot);
                     }
-                    Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
 
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, locList);
                     arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                     spinnerLoc.setAdapter(arrayAdapter);
+                    spinnerLoc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            locations.setIdLocations(i);
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
+
+
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         //get the Equipments
-
-        Query queryidEquip = instance.getReference("Equipment").orderByChild("idEquipment");
+        equipment = new Equipment();
+        Query queryidEquip = instance.getReference().child("Equipment").orderByChild("idEquipment");
         try {
             queryidEquip.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
-                    equipment = dataSnapshot.getValue(Equipment.class);
-
-
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     final List<String> equipName = new ArrayList<String>();
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -134,40 +150,60 @@ public class CreateTicketActivity extends AppCompatActivity {
 
                         equipName.add(equipNameFromSnapshot);
                     }
-                    Log.d(TAG, "Employee id" + employee.getIdEmployee());
+
 
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, equipName);
                     arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                     spinnerEquip.setAdapter(arrayAdapter);
-                }
+                    spinnerEquip.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            equipment.setIdEquipment(i);
+                        }
 
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+                        }
+                    });
+                }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.w(TAG, "Failed to read value.", databaseError.toException());
                 }
             });
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        employee = new Employee();
+
         try {
-            Query queryidEmp = instance.getReference("Employee").orderByChild("IdEmployee");
+            Query queryidEmp = instance.getReference().child("Employee").orderByChild("IdEmployee").limitToFirst(1);
 
             queryidEmp.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    employee = dataSnapshot.getValue(Employee.class);
+                    //employee = dataSnapshot.getValue(Employee.class);
                     final List<String> empName = new ArrayList<String>();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String empNameFromSnapshot = snapshot.getValue(String.class);
+                        String empNameFromSnapshot = snapshot.child("name").getValue(String.class);
                         empName.add(empNameFromSnapshot);
                     }
-                    Log.d(TAG, "Employee id" + employee.getIdEmployee());
 
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CreateTicketActivity.this, android.R.layout.simple_spinner_item, empName);
                     arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
                     spinnerEmp.setAdapter(arrayAdapter);
+                    spinnerEmp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            employee.setIdEmployee(i);
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
+                    //todo:after I choose
                 }
 
                 @Override
@@ -181,6 +217,7 @@ public class CreateTicketActivity extends AppCompatActivity {
 
 
         //State
+        ticket = new Ticket();
         textViewState1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,24 +235,21 @@ public class CreateTicketActivity extends AppCompatActivity {
 
 
         //Tech
-        String CurrentTechnicianEmail = firebaseAuth.getCurrentUser().getEmail();
-        //Query à bd; Select email from Technician;
-        Query queryEmails = instance.getReference("Technician").orderByChild("email");
+        firebaseAuth = FirebaseAuth.getInstance();
+        String CurrentTechnicianName = firebaseAuth.getCurrentUser().getDisplayName();
 
+        //Query à bd; Select email from Technician;
+        Query queryName = instance.getReference().child("Technician").orderByChild("name").limitToFirst(1);
         try {
-            queryEmails.addListenerForSingleValueEvent(new ValueEventListener() {
+            queryName.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    //employee = dataSnapshot.getValue(Employee.class);
-                    final List<String> listEmails = new ArrayList<String>();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        emails = snapshot.getValue(String.class);
-                        listEmails.add(emails);
+                    String techNameFromSnapshot = dataSnapshot.child("name").getValue(String.class);
+                    if (CurrentTechnicianName != techNameFromSnapshot) {
+                        Toast.makeText(CreateTicketActivity.this, "Failed to read the query", Toast.LENGTH_LONG).show();
                     }
-                    if (listEmails.contains(CurrentTechnicianEmail)) {
-                        textViewTech1.setText(firebaseAuth.getCurrentUser().getDisplayName());
-                    }
-                    Log.d(TAG, "Technician's Email " + employee.getIdEmployee());
+                    //textViewTech1.setText(techNameFromSnapshot);
+                    textViewTech1.setText(CurrentTechnicianName);
                 }
 
                 @Override
@@ -223,20 +257,28 @@ public class CreateTicketActivity extends AppCompatActivity {
                     Log.w(TAG, "Failed to read value.", error.toException());
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        //Description
+        desc = editTextDesc.getText().toString();
+        if (TextUtils.isEmpty(desc)) {
+            editTextDesc.setError("Don't leave this field empty");
+        } else {
+            ticket.setDescription(desc);
+            btnCreateTicket.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-        btnCreateTicket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                desc = editTextDesc.getText().toString();
-                CreateTicket(currentTime, desc, ticket.getState(), equipment.getIdEquipment(), employee.getIdEmployee());
-                Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+                    CreateTicket(currentTime, desc, ticket.getState(), equipment.getIdEquipment(), employee.getIdEmployee());
+                    Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
+            });
+        }
     }
 
     public void CreateTicket(Date requested_date, String description, Boolean state, int idEquipment, int idEmployee) {
