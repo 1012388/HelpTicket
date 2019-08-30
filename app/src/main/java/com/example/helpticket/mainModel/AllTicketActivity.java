@@ -24,6 +24,20 @@ public class AllTicketActivity extends AppCompatActivity {
         // setSupportActionBar(toolbar);
         Button buttonSolved     = (Button) findViewById(R.id.buttonSolved);
         Button buttonNotSolved  = (Button) findViewById(R.id.buttonNotSolved);
+
+        buttonSolved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSolvedTickets(view);
+            }
+        });
+        buttonNotSolved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showUnsolvedTickets(view);
+            }
+        });
+
     }
 
     public void showUnsolvedTickets(View view) {

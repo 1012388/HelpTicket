@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,10 +11,10 @@
         android:layout_width="212dp"
         android:layout_height="39dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="false"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="false"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
@@ -34,10 +33,10 @@
         android:layout_width="212dp"
         android:layout_height="39dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
@@ -49,7 +48,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textViewEmp"
         app:layout_constraintTop_toBottomOf="@+id/spinnerEquip"
-        app:layout_constraintVertical_bias="0.015" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textViewTech1"
@@ -57,9 +56,9 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
@@ -76,10 +75,10 @@
         android:layout_width="212dp"
         android:layout_height="39dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="false"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="false"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
@@ -99,11 +98,11 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/tech"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,10 +113,10 @@
         android:layout_width="367dp"
         android:layout_height="25dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
@@ -137,12 +136,12 @@
         android:layout_height="38dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
         android:text="@string/date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewState" />
@@ -153,9 +152,9 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
@@ -163,26 +162,25 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.047"
         app:layout_constraintStart_toEndOf="@+id/textViewDate"
         app:layout_constraintTop_toBottomOf="@+id/textViewState1"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.01" />
 
     <EditText
         android:id="@+id/editTextDesc"
         android:layout_width="212dp"
         android:layout_height="39dp"
-        android:layout_alignEnd="@+id/toolbar"
-        android:layout_alignRight="@+id/toolbar"
+
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+
         android:layout_marginBottom="8dp"
-        android:autofillHints=""
         android:ems="10"
         android:hint="@string/ticket_description"
         android:inputType="textPersonName"
@@ -191,7 +189,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textViewDesc"
         app:layout_constraintTop_toBottomOf="@+id/textViewNumTicket"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/textViewEmp"
@@ -199,11 +198,11 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/employee"
         app:layout_constraintStart_toStartOf="parent"
@@ -215,11 +214,11 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/location"
         app:layout_constraintStart_toStartOf="parent"
@@ -231,11 +230,11 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/equipment"
         app:layout_constraintStart_toStartOf="parent"
@@ -247,12 +246,12 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewNumTicket" />
@@ -263,12 +262,12 @@
         android:layout_height="39dp"
         android:layout_alignTop="@+id/textViewNumTicket"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="@string/state"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewLoc" />
@@ -278,10 +277,10 @@
         android:layout_width="212dp"
         android:layout_height="39dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
@@ -289,20 +288,20 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.166"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textViewState"
         app:layout_constraintTop_toBottomOf="@+id/spinnerLoc"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.009" />
 
     <Button
         android:id="@+id/btnCreateTicket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
+
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+
         android:layout_alignParentBottom="true"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

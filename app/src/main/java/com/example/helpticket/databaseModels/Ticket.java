@@ -36,7 +36,7 @@ public class Ticket {
         this.state = false;
     }
 
-    @Exclude
+    //@Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("idTicket", idTicket);

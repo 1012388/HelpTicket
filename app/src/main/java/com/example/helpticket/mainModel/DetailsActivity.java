@@ -64,8 +64,8 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_ticket);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         TextView textViewNumTicket = (TextView) findViewById(R.id.textViewNumTicket);
         TextView textViewLoc = (TextView) findViewById(R.id.textViewLoc);
@@ -80,13 +80,15 @@ public class DetailsActivity extends AppCompatActivity {
         int idTicket = intent.getIntExtra("IDTicket", 0);
 
         FirebaseDatabase instance = FirebaseDatabase.getInstance();
+        ticket_technician = new Ticket_Technician();
 
-        DatabaseReference ref = instance.getReference("Ticket_Technician");
+        Query queryDuration = instance.getReference().child("Ticket_Technician").orderByChild("duration");
         try {
-            ref.addValueEventListener(new ValueEventListener() {
+            queryDuration.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ticket_technician = dataSnapshot.getValue(Ticket_Technician.class);
+                    String duration = dataSnapshot.child("duration").getValue(String.class);
+
                 }
 
                 @Override
@@ -204,8 +206,8 @@ public class DetailsActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     ticketState = new ArrayList<String>();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        ticket = snapshot.getValue(Ticket.class);
-                        String ticketStateFromSnapshot = ticket.getState().toString();
+                        String ticketStateFromSnapshot = snapshot.child("state").getValue(String.class);
+
                         ticketState.add(ticketStateFromSnapshot);
                     }
                 }

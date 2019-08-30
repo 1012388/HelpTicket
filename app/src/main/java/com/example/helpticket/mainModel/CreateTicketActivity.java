@@ -6,6 +6,7 @@ import com.example.helpticket.databaseModels.Employee;
 import com.example.helpticket.databaseModels.Equipment;
 import com.example.helpticket.databaseModels.Locations;
 import com.example.helpticket.databaseModels.Ticket;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.helpticket.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +46,9 @@ import java.util.Map;
 
 public class CreateTicketActivity extends AppCompatActivity {
 
+    public static final String SOLVED = "Solved";
     private static final String TAG = "CreateTicketActivity";
+    public static final String NOT_SOLVED = "Not Solved";
     private Date currentTime;
     private String equipName;
     private Equipment equipment;
@@ -57,6 +61,7 @@ public class CreateTicketActivity extends AppCompatActivity {
     private String desc;
     private FirebaseAuth firebaseAuth;
     private String emails;
+    private int i = 0;
 
 
     @Override
@@ -87,7 +92,6 @@ public class CreateTicketActivity extends AppCompatActivity {
 
         //Creating a path for TicketHolder
 
-        //TODO: FIX THE LAYOUT MISTAKE
         //Get the Locations
         //select name from Locations
         //select
@@ -203,7 +207,6 @@ public class CreateTicketActivity extends AppCompatActivity {
 
                         }
                     });
-                    //todo:after I choose
                 }
 
                 @Override
@@ -218,67 +221,73 @@ public class CreateTicketActivity extends AppCompatActivity {
 
         //State
         ticket = new Ticket();
+
         textViewState1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int i = 0;
+
                 i = i++;
                 if (i % 2 == 0) {//State é False
-                    ticket.setState(false);
-                    textViewState1.setText("Not Solved");
-                } else {
                     ticket.setState(true);
-                    textViewState1.setText("Solved");
+                    textViewState1.setText(NOT_SOLVED);
+
+                } else {
+                    ticket.setState(false);
+                    textViewState1.setText(SOLVED);
                 }
+
             }
         });
 
 
         //Tech
+
         firebaseAuth = FirebaseAuth.getInstance();
-        String CurrentTechnicianName = firebaseAuth.getCurrentUser().getDisplayName();
+        // Task<GetTokenResult> accessToken = firebaseAuth.getAccessToken(true);
+        //check if the user is authenticated
+        //if(accessToken.isSuccessful()) {
+
 
         //Query à bd; Select email from Technician;
         Query queryName = instance.getReference().child("Technician").orderByChild("name").limitToFirst(1);
-        try {
-            queryName.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String techNameFromSnapshot = dataSnapshot.child("name").getValue(String.class);
-                    if (CurrentTechnicianName != techNameFromSnapshot) {
-                        Toast.makeText(CreateTicketActivity.this, "Failed to read the query", Toast.LENGTH_LONG).show();
-                    }
-                    //textViewTech1.setText(techNameFromSnapshot);
-                    textViewTech1.setText(CurrentTechnicianName);
-                }
+        String CurrentTechnicianName = firebaseAuth.getCurrentUser().getDisplayName();
+        //try {
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.w(TAG, "Failed to read value.", error.toException());
+        queryName.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String techNameFromSnapshot = dataSnapshot.child("name").getValue(String.class);
+                if (CurrentTechnicianName != techNameFromSnapshot) {
+                    Toast.makeText(CreateTicketActivity.this, "Failed to read the query,but there you go a default name", Toast.LENGTH_LONG).show();
+                    textViewTech1.setText("Bruno");
                 }
-            });
+                //textViewTech1.setText(techNameFromSnapshot);
+                textViewTech1.setText(CurrentTechnicianName);
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        // } catch (Exception e) {
+        //.printStackTrace();
+        //}
+        //}
 
         //Description
         desc = editTextDesc.getText().toString();
         if (TextUtils.isEmpty(desc)) {
             editTextDesc.setError("Don't leave this field empty");
-        } else {
-            ticket.setDescription(desc);
-            btnCreateTicket.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    CreateTicket(currentTime, desc, ticket.getState(), equipment.getIdEquipment(), employee.getIdEmployee());
-                    Snackbar.make(view, "Criado com sucesso", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-
-            });
         }
+        ticket.setDescription(desc);
+        btnCreateTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateTicket(currentTime, desc, ticket.getState(), equipment.getIdEquipment(), employee.getIdEmployee());
+            }
+        });
     }
 
     public void CreateTicket(Date requested_date, String description, Boolean state, int idEquipment, int idEmployee) {
@@ -292,6 +301,9 @@ public class CreateTicketActivity extends AppCompatActivity {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/ticket/" + ticketId, postValues);
         mDatabase.updateChildren(childUpdates);
+        if (ticketId == mDatabase.getKey()) {
+            Toast.makeText(CreateTicketActivity.this, "Criado com sucesso", Toast.LENGTH_SHORT).show();
+        }
         //Assign the current user to the ticket
     }
 

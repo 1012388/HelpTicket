@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {//Significa que há um user ligado, Se está na login activity então é porque quer se desligar
 
-            //todo:Testar isto, já deve dar bem
+
             welcome.setText("Hi, " + currentUser.getDisplayName());
             editTextEmail.setVisibility(View.VISIBLE);
             editTextPassword.setVisibility(View.VISIBLE);
@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(LoginActivity.this, "You are leaving the app", Toast.LENGTH_SHORT).show();
         //finish();
     }
-    //todo:when the app is killed the user needs to log out
+
 
     public void LogInUser() {
         String email = editTextEmail.getText().toString().trim();
@@ -303,7 +303,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
-            //PUT USERNAME IN THE TET VIEW
+
+            welcome.setText("Help Ticket");
             editTextEmail.setVisibility(View.VISIBLE);
             editTextPassword.setVisibility(View.VISIBLE);
 

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -74,9 +75,36 @@ public class SolvedTicketActivity extends AppCompatActivity {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerViewSolved);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        String param = "idTicket";
+        FirebaseRecyclerOptions<Ticket> options = new FirebaseRecyclerOptions.Builder<Ticket>()
+                .setQuery(getReportList(param), Ticket.class).build();
+
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Ticket, SolvedTicketActivity.EntryViewHolder>(options) {
+            @NonNull
+            @Override
+            public SolvedTicketActivity.EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View ReportView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_list, parent, false);
+                return new SolvedTicketActivity.EntryViewHolder(ReportView);
+            }
+
+            @Override
+            protected void onBindViewHolder(SolvedTicketActivity.EntryViewHolder entryViewHolder, int position, Ticket ticket) {
+                entryViewHolder.setTitle("Ticket nº: " + ticket.getIdTicket());
+
+                entryViewHolder.root.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(SolvedTicketActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
     private String inputShearchParameters() {
@@ -113,27 +141,8 @@ public class SolvedTicketActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //when the recycler View is first loaded the view is loaded with the default parameter,
 
-        FirebaseRecyclerOptions<Ticket> options = new FirebaseRecyclerOptions.Builder<Ticket>()
-                .setQuery(getSolvedTickets(), Ticket.class)
-                .build();
-
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Ticket, EntryViewHolder>(options) {
-
-            @NonNull
-            @Override
-            public EntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View SolvedTicketview = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_solved_ticket, parent, false);
-                return new EntryViewHolder(SolvedTicketview);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull EntryViewHolder entryViewHolder, int i, @NonNull Ticket ticket) {
-                entryViewHolder.setTitle("Ticket " + i);
-            }
-
-        };
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
 
@@ -143,22 +152,21 @@ public class SolvedTicketActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 
-    public Query getSolvedTickets() {
-        //TODO:MAKE THE QUERY INTERACTIVE,MEANING LET THE USER SHEARCH IN THE SOLVED TICKETS
-        DatabaseReference reference;
-        //Reference for Ticket node
-        reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
-        reference.keepSynced(true);
+    private Query getReportList(String param) {
 
+
+        DatabaseReference reference;
+        //Reference for TicketHolder node
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
 
         //Reference for Technician_Ticket node
         try {
             reference = FirebaseDatabase.getInstance().getReference().child("Ticket_Technician");
+            reference.keepSynced(true);
 
-            //select idTechinician from Ticket_technician where requested_date = current_Date
+            //Query : select idTechinician from Ticket_technician where requested_date = current_Date
             Query ticket_technicianID = reference.orderByChild("idTechnician").equalTo(currentUserId)
-                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString());
+                    .orderByChild("requested_date").equalTo(currentDate.getTime().toString()).limitToFirst(1);
 
             ticket_technicianID.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -177,59 +185,49 @@ public class SolvedTicketActivity extends AppCompatActivity {
 
         reference = FirebaseDatabase.getInstance().getReference().child("Ticket");
         Query querySolvedTickets = null;
-            //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
-        try {
-            querySolvedTickets =
-                    (Query) reference.orderByChild("idTicket").equalTo((ticket_technician.getIdTicket().toString()))
-                            .orderByChild("state").equalTo(true);
 
-            querySolvedTickets.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    dataSnapshot.getValue(com.example.helpticket.databaseModels.Ticket.class);
-                }
+        //Select idTicket from Ticket,Ticket_Techinician where Ticket_Techinician.idTicket = Ticket.idTicket and state is true;
+        querySolvedTickets = (Query) reference.orderByChild(param).equalTo((ticket_technician.getIdTicket().toString()))
+                .orderByChild("state").equalTo(true);
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        reference.keepSynced(true);
 
         return querySolvedTickets;
     }
 
+
     public static class EntryViewHolder extends RecyclerView.ViewHolder {
-        View mView;
-        Button ticket;
+        public LinearLayout root;
+        public Button ticket;
 
         public EntryViewHolder(View itemView) {
             super(itemView);
-            mView = itemView;
-        }
+            root = itemView.findViewById(R.id.listRoot);
 
-        public void setTitle(String title){
-            ticket = (Button) mView.findViewById(R.id.btnNewticket);
-            ticket.setText(title);
-        }
+            ticket = itemView.findViewById(R.id.btnTicket);
 
-        public void setContent(String content){
             ticket.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // showDetailsTIcket();
-                }
-            });
+                                          @Override
+                                          public void onClick(View view) {
+                                              // showDetailsTIcket();
+                                          }
+                                      }
+            );
+
+        }
+
+        public void setTitle(String title) {
+            ticket = (Button) itemView.findViewById(R.id.btnNewticket);
+            ticket.setText(title);
         }
 
 
     }
+
     public void showDetailsTIcket(){
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra("IDTicket",ticket.getIdTicket());
         startActivity(intent);
     }
-
 
 }

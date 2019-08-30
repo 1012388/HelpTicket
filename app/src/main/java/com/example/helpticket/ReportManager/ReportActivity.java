@@ -53,10 +53,12 @@ public class ReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMenu);
         toolbar.inflateMenu(R.menu.main_menu);
@@ -228,7 +230,6 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     private Query getReportList(String param) {
-        //TODO: make the query responsive,meaning that the query will change if the param is different
 
 
         DatabaseReference reference;
