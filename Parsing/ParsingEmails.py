@@ -13,8 +13,7 @@ port = 995
 server = poplib.POP3_SSL(host,port)
 server.set_debuglevel(2)
 # user account authentication
-#server.user("santos_bruno98@live.com.pt")
-#server.pass_("asdfgh5678")
+
 server.user(user)
 server.pass_(password)
 
